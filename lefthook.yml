@@ -1,0 +1,15 @@
+pre-commit:
+  jobs:
+    - name: check
+      run: pnpm check:staged
+      stage_fixed: true
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: pnpm check:types
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit {1}
