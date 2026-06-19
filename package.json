@@ -18,7 +18,9 @@
     "check:ci": "biome ci .",
     "prepare": "lefthook install",
     "check:audit": "pnpm audit --prod",
-    "deps:outdated": "pnpm outdated"
+    "deps:outdated": "pnpm outdated",
+    "release": "release-it",
+    "analyze": "next experimental-analyze"
   },
   "dependencies": {
     "next": "16.2.9",
@@ -29,12 +31,14 @@
     "@biomejs/biome": "^2.5.0",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
+    "@release-it/conventional-changelog": "^11.0.1",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "lefthook": "^2.1.9",
+    "release-it": "^20.2.0",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3"
   }
