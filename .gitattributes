@@ -1,0 +1,41 @@
+# Unify line endings — any text file is normalized to LF
+# regardless of the developer’s OS (critical for Windows team members)
+* text=auto eol=lf
+
+# Explicit rules for main project file types (just in case someone has
+# non-standard git autocrlf settings locally)
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+
+# Binary files — git must not attempt to diff or normalize
+# line endings inside them (otherwise there is a risk of file corruption)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+
+# Lockfile — generated file: exclude from PR diffs (it always shows
+# thousands of noisy lines) and from GitHub language statistics
+pnpm-lock.yaml -diff
+pnpm-lock.yaml linguist-generated=true
+
+# Auto-generated Next.js file — same rule
+next-env.d.ts linguist-generated=true
