@@ -16,12 +16,14 @@
     "check:types": "tsc --noEmit",
     "check:staged": "biome check --staged --write --no-errors-on-unmatched",
     "check:ci": "biome ci .",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "check:audit": "pnpm audit --prod",
+    "deps:outdated": "pnpm outdated"
   },
   "dependencies": {
     "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
