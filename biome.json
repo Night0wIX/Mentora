@@ -20,6 +20,27 @@
       "preset": "recommended",
       "suspicious": {
         "noUnknownAtRules": "off"
+      },
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["@/modules/*/**", "!@/modules/*/index"],
+                "message": "Import only from the module root (@/modules/X) — that's the public barrel. Internal module files (api/, components/, hooks/, etc.) must not be imported directly from outside, regardless of depth. If the export you need isn't in modules/X/index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/libs/*/**", "!@/shared/libs/*/index"],
+                "message": "Import only from the libs topic root (@/shared/libs/X) — that's the public barrel. Internal files of the topic (provider, hooks, constants) must not be imported directly from outside the topic, regardless of depth. If the export you need isn't in index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/ui/*/**", "!@/shared/ui/*/index"],
+                "message": "Import only from the ui component root (@/shared/ui/X) — that's the public barrel. Internal component files (.test, .stories, .types) must not be imported directly from outside, regardless of depth."
+              }
+            ]
+          }
+        }
       }
     },
     "domains": {
@@ -30,8 +51,29 @@
   "assist": {
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":NODE:",
+              ":BLANK_LINE:",
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              "@/app/**",
+              "@/modules/**",
+              "@/shared/**",
+              "@/stores/**",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        }
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }
