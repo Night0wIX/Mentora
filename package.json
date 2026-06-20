@@ -24,7 +24,9 @@
     "audit": "pnpm audit --prod",
     "deps:outdated": "pnpm outdated",
     "prepare": "lefthook install",
-    "release": "release-it"
+    "release": "release-it",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -43,7 +45,12 @@
     "@biomejs/biome": "^2.5.0",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
+    "@github-ui/storybook-addon-performance-panel": "^1.1.4",
     "@release-it/conventional-changelog": "^11.0.1",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-mcp": "^0.6.0",
+    "@storybook/nextjs-vite": "^10.4.6",
     "@tailwindcss/postcss": "^4.3.1",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
@@ -52,7 +59,9 @@
     "lefthook": "^2.1.9",
     "release-it": "^20.2.0",
     "shadcn": "^4.11.0",
+    "storybook": "^10.4.6",
     "tailwindcss": "^4.3.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16"
   }
 }
