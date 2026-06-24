@@ -1,16 +1,29 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "schedule": ["every weekday before 6am"],
+  "schedule": ["* 0-5 * * 1-5"],
   "labels": ["dependencies"],
   "commitMessagePrefix": "chore(deps):",
   "rangeStrategy": "bump",
+  "dependencyDashboardApproval": false,
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["every sunday before 6am"]
+    "schedule": ["* 0-5 * * 0"]
   },
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"]
-  }
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch", "minor"],
+      "dependencyDashboardApproval": false,
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "automerge": false
+    }
+  ]
 }
