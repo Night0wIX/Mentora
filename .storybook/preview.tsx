@@ -1,35 +1,36 @@
 import type { Decorator, Preview } from "@storybook/nextjs-vite";
-import { Inter } from "next/font/google";
-import { useEffect } from "react";
 
 import "../src/styles/index.css";
+import { INTER } from "../src/shared/config";
+import { MotionProvider } from "../src/shared/libs/motion";
+import { ThemeProvider } from "../src/shared/libs/theme";
 
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-inter",
-  display: "swap",
-});
+// Applies dark/light class to <html> — Storybook iframe skips Next.js layout.
+const withTheme: Decorator = (Story) => {
+  return (
+    <ThemeProvider>
+      <div className={`${INTER.variable} font-sans antialiased`}>
+        <Story />
+      </div>
+    </ThemeProvider>
+  );
+};
 
-/**
- * Mirrors what `RootLayout` + `ThemeProvider` do in the real app: applies the
- * `dark`/`light` class to the document root so our CSS-variable tokens
- * (src/styles/light.css, dark.css) resolve correctly. Storybook's preview
- * iframe doesn't run our Next.js layout, so stories would otherwise always
- * render in an unstyled/light-only context.
- */
-const withTheme: Decorator = (Story, context) => {
-  const theme = context.globals.theme as "light" | "dark";
+const withMotion: Decorator = (Story, context) => {
+  const value = context.globals.reduceMotion;
 
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
-    root.classList.toggle("light", theme === "light");
-  }, [theme]);
+  let reduceMotionOverride: boolean | undefined;
+
+  if (value === "reduce") {
+    reduceMotionOverride = true;
+  } else if (value === "no-reduce") {
+    reduceMotionOverride = false;
+  }
 
   return (
-    <div className={`${inter.variable} font-sans antialiased`}>
+    <MotionProvider overrideReduceMotion={reduceMotionOverride}>
       <Story />
-    </div>
+    </MotionProvider>
   );
 };
 
@@ -47,13 +48,27 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    reduceMotion: {
+      name: "Reduce Motion",
+      description: "Override reduced motion preference",
+      toolbar: {
+        icon: "transfer",
+        items: [
+          { value: undefined, title: "System" },
+          { value: "reduce", title: "Reduce" },
+          { value: "no-reduce", title: "No Reduce" },
+        ],
+        dynamicTitle: true,
+      },
+    },
   },
 
   initialGlobals: {
     theme: "light",
+    reduceMotion: undefined,
   },
 
-  decorators: [withTheme],
+  decorators: [withTheme, withMotion],
 
   parameters: {
     layout: "centered",
@@ -65,8 +80,7 @@ const preview: Preview = {
       },
     },
 
-    // WCAG 2.1 AA is our baseline bar; individual stories can override via
-    // the `a11y` parameter (see button.stories.tsx for a documented example).
+    // WCAG 2.1 AA baseline; stories can override via `a11y` parameter.
     a11y: {
       test: "error",
     },

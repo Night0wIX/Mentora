@@ -8,14 +8,10 @@ import {
 } from "./constants";
 import { useMotion } from "./motion-provider";
 
-const REDUCED_MOTION_DURATION_S = 0.01;
+const REDUCED_MOTION_DURATION_S = 0;
 
 export function useMotionTransition(transition: Transition = {}): Transition {
   const motionState = useMotion();
-
-  if (motionState === null) {
-    return transition;
-  }
 
   if (motionState.reduceMotion) {
     return { ...transition, duration: REDUCED_MOTION_DURATION_S };

@@ -1,30 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import type { PropsWithChildren } from "react";
 
-import { cn } from "@/shared/libs/cn";
 import "@/styles/index.css";
+
 import { RootProvider } from "@/app/root-provider";
+import { BASE_METADATA, INTER } from "@/shared/config";
 
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: "Mentora",
-  description: "Course management platform",
-};
+export const metadata: Metadata = BASE_METADATA;
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html
-      lang="uk"
-      className={cn("h-full antialiased", inter.variable)}
-      suppressHydrationWarning
-    >
-      <body className="flex min-h-full flex-col bg-background text-foreground font-sans">
+    <html lang="en" className={INTER.variable} suppressHydrationWarning>
+      <body className="flex min-h-dvh flex-col bg-background text-foreground font-sans antialiased">
         <RootProvider>{children}</RootProvider>
       </body>
     </html>

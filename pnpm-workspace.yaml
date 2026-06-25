@@ -1,9 +1,7 @@
 allowBuilds:
   esbuild: false
   lefthook: false
-  sharp: false
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+  sharp: true
+
 overrides:
   postcss: '>=8.5.15'

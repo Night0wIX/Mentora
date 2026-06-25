@@ -3,42 +3,51 @@
 import type { PropsWithChildren } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { MOBILE_BREAKPOINT_PX } from "./constants";
-
-const RESIZE_DEBOUNCE_MS = 150;
-
-export interface MotionState {
+interface MotionState {
   reduceMotion: boolean;
   isMobileViewport: boolean;
 }
 
-type MotionContextValue = MotionState | null;
+interface MotionProviderProps extends PropsWithChildren {
+  // Forces `reduceMotion` regardless of the system preference
+  overrideReduceMotion?: boolean;
+}
 
-const MotionContext = createContext<MotionContextValue>(null);
+const RESIZE_DEBOUNCE_MS = 150;
+const MOBILE_BREAKPOINT_PX = 768; // Matches Tailwind's `md` breakpoint
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const DEFAULT_MOTION_STATE: MotionState = {
+  reduceMotion: false,
+  isMobileViewport: false,
+};
+
+const MotionContext = createContext<MotionState>(DEFAULT_MOTION_STATE);
 
 function readMotionState(): MotionState {
+  if (typeof window === "undefined") {
+    return DEFAULT_MOTION_STATE;
+  }
+
   return {
-    reduceMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    reduceMotion: window.matchMedia(REDUCED_MOTION_QUERY).matches,
     isMobileViewport: window.innerWidth < MOBILE_BREAKPOINT_PX,
   };
 }
 
-export function MotionProvider({ children }: PropsWithChildren) {
-  const [motionState, setMotionState] = useState<MotionState | null>(null);
+export function MotionProvider({
+  children,
+  overrideReduceMotion,
+}: MotionProviderProps) {
+  const [motionState, setMotionState] = useState<MotionState>(readMotionState);
 
   useEffect(() => {
+    // Re-sync in case the initial snapshot was taken during SSR
     setMotionState(readMotionState());
 
-    const reducedMotionQuery = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
+    const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
 
     const handleReducedMotionChange = (event: MediaQueryListEvent): void => {
-      setMotionState((previousState) => ({
-        reduceMotion: event.matches,
-        isMobileViewport:
-          previousState?.isMobileViewport ?? readMotionState().isMobileViewport,
-      }));
+      setMotionState((prev) => ({ ...prev, reduceMotion: event.matches }));
     };
 
     let resizeTimeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -46,11 +55,9 @@ export function MotionProvider({ children }: PropsWithChildren) {
     const handleViewportResize = (): void => {
       clearTimeout(resizeTimeoutId);
       resizeTimeoutId = setTimeout(() => {
-        const isMobileViewport = window.innerWidth < MOBILE_BREAKPOINT_PX;
-        setMotionState((previousState) => ({
-          reduceMotion:
-            previousState?.reduceMotion ?? reducedMotionQuery.matches,
-          isMobileViewport,
+        setMotionState((prev) => ({
+          ...prev,
+          isMobileViewport: window.innerWidth < MOBILE_BREAKPOINT_PX,
         }));
       }, RESIZE_DEBOUNCE_MS);
     };
@@ -68,13 +75,18 @@ export function MotionProvider({ children }: PropsWithChildren) {
     };
   }, []);
 
+  const resolvedMotionState: MotionState =
+    overrideReduceMotion === undefined
+      ? motionState
+      : { ...motionState, reduceMotion: overrideReduceMotion };
+
   return (
-    <MotionContext.Provider value={motionState}>
+    <MotionContext.Provider value={resolvedMotionState}>
       {children}
     </MotionContext.Provider>
   );
 }
 
-export function useMotion(): MotionContextValue {
+export function useMotion(): MotionState {
   return useContext(MotionContext);
 }

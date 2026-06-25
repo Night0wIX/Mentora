@@ -27,10 +27,6 @@
           "options": {
             "patterns": [
               {
-                "group": ["@/modules/*/**", "!@/modules/*/index"],
-                "message": "Import only from the module root (@/modules/X) — that's the public barrel. Internal module files (api/, components/, hooks/, etc.) must not be imported directly from outside, regardless of depth. If the export you need isn't in modules/X/index.ts, add it there."
-              },
-              {
                 "group": ["@/shared/libs/*/**", "!@/shared/libs/*/index"],
                 "message": "Import only from the libs topic root (@/shared/libs/X) — that's the public barrel. Internal files of the topic (provider, hooks, constants) must not be imported directly from outside the topic, regardless of depth. If the export you need isn't in index.ts, add it there."
               },
@@ -60,9 +56,7 @@
               ":PACKAGE:",
               ":BLANK_LINE:",
               "@/app/**",
-              "@/modules/**",
               "@/shared/**",
-              "@/stores/**",
               ":BLANK_LINE:",
               ":PATH:"
             ]

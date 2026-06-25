@@ -1,38 +1,44 @@
 "use client";
 
-import { Monitor, Moon, Sun } from "lucide-react";
+import { useIsHydrated } from "@/shared/hooks";
+import { useThemeTransition } from "@/shared/libs/motion";
+import { cn } from "@/shared/utils";
 
-import { cn } from "../../libs/cn";
-import { useThemeTransition } from "../../libs/motion/use-theme-transition";
-
-const THEME_OPTIONS = [
-  { value: "light", label: "Light", icon: Sun },
-  { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Monitor },
-] as const;
+import {
+  THEME_TOGGLE_BUTTON_SIZE_CLASS,
+  THEME_TOGGLE_ICON_SIZE_CLASS,
+  themeOptions,
+} from "./theme-toggle.constants";
+import { ThemeToggleSkeleton } from "./theme-toggle.skeleton";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useThemeTransition();
+  const isHydrated = useIsHydrated();
+
+  if (!isHydrated) {
+    return <ThemeToggleSkeleton />;
+  }
 
   return (
     <div
       role="radiogroup"
       aria-label="Theme selection"
-      className="inline-flex items-center gap-1 rounded-full border border-border bg-muted p-1"
+      className="inline-flex items-center gap-1 rounded-full border bg-muted p-1"
     >
-      {THEME_OPTIONS.map(({ value, label, icon: Icon }) => {
+      {themeOptions.map(({ value, label, icon: Icon }) => {
         const isActive = theme === value;
 
         return (
           <label
             key={value}
+            title={label}
             className={cn(
-              "flex size-8 items-center justify-center rounded-full transition-colors",
+              "relative flex cursor-pointer items-center justify-center rounded-full transition-colors",
+              THEME_TOGGLE_BUTTON_SIZE_CLASS,
               isActive
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
-            title={label}
           >
             <input
               type="radio"
@@ -40,10 +46,16 @@ export function ThemeToggle() {
               value={value}
               checked={isActive}
               onChange={() => setTheme(value)}
-              className="sr-only"
               aria-label={label}
+              className="absolute inset-0 cursor-pointer appearance-none rounded-full opacity-0 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
             />
-            <Icon className="size-4" />
+            <Icon
+              aria-hidden="true"
+              className={cn(
+                THEME_TOGGLE_ICON_SIZE_CLASS,
+                "pointer-events-none",
+              )}
+            />
           </label>
         );
       })}

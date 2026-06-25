@@ -1,4 +1,2 @@
 export const MOTION_DURATION_DESKTOP_S = 0.25;
 export const MOTION_DURATION_MOBILE_S = 0.15;
-
-export const MOBILE_BREAKPOINT_PX = 768;
