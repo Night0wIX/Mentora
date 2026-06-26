@@ -24,10 +24,6 @@ const DEFAULT_MOTION_STATE: MotionState = {
 const MotionContext = createContext<MotionState>(DEFAULT_MOTION_STATE);
 
 function readMotionState(): MotionState {
-  if (typeof window === "undefined") {
-    return DEFAULT_MOTION_STATE;
-  }
-
   return {
     reduceMotion: window.matchMedia(REDUCED_MOTION_QUERY).matches,
     isMobileViewport: window.innerWidth < MOBILE_BREAKPOINT_PX,
@@ -38,7 +34,8 @@ export function MotionProvider({
   children,
   overrideReduceMotion,
 }: MotionProviderProps) {
-  const [motionState, setMotionState] = useState<MotionState>(readMotionState);
+  const [motionState, setMotionState] =
+    useState<MotionState>(DEFAULT_MOTION_STATE);
 
   useEffect(() => {
     // Re-sync in case the initial snapshot was taken during SSR
