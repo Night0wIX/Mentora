@@ -27,12 +27,28 @@
           "options": {
             "patterns": [
               {
-                "group": ["@/shared/libs/*/**", "!@/shared/libs/*/index"],
-                "message": "Import only from the libs topic root (@/shared/libs/X) — that's the public barrel. Internal files of the topic (provider, hooks, constants) must not be imported directly from outside the topic, regardless of depth. If the export you need isn't in index.ts, add it there."
+                "group": ["@/shared/ui/*/*"],
+                "message": "Import only from the UI component barrel (@/shared/ui/X). Deep imports into component internals are forbidden. If the export you need is not in index.ts, add it there."
               },
               {
-                "group": ["@/shared/ui/*/**", "!@/shared/ui/*/index"],
-                "message": "Import only from the ui component root (@/shared/ui/X) — that's the public barrel. Internal component files (.test, .stories, .types) must not be imported directly from outside, regardless of depth."
+                "group": ["@/shared/libs/*/*"],
+                "message": "Import only from the lib topic barrel (@/shared/libs/X). Deep imports into lib internals are forbidden. If the export you need is not in index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/hooks/*"],
+                "message": "Import hooks from the barrel: @/shared/hooks. Direct imports from individual hook files are forbidden. If the export you need is not in index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/utils/*"],
+                "message": "Import utils from the barrel: @/shared/utils. Direct imports from individual util files are forbidden. If the export you need is not in index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/config/*"],
+                "message": "Import config from the barrel: @/shared/config. Direct imports from individual config files are forbidden. If the export you need is not in index.ts, add it there."
+              },
+              {
+                "group": ["@/shared/types/*"],
+                "message": "Import types from the barrel: @/shared/types. Direct imports from individual type files are forbidden. If the export you need is not in index.ts, add it there."
               }
             ]
           }

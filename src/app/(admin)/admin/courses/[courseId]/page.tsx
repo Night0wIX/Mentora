@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import type { CourseIdParams, PageProps } from "@/shared/types/page-params";
+import type { CourseIdParams, PageProps } from "@/shared/types";
 
 export const metadata: Metadata = {
   title: "Course detail",
