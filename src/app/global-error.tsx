@@ -9,7 +9,7 @@ interface GlobalErrorProps {
   reset: () => void;
 }
 
-export default function GlobalError({ reset }: GlobalErrorProps) {
+const GlobalError = ({ reset }: GlobalErrorProps) => {
   return (
     <html lang="en" className={INTER.variable} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-24 text-center font-sans text-foreground antialiased">
@@ -30,4 +30,6 @@ export default function GlobalError({ reset }: GlobalErrorProps) {
       </body>
     </html>
   );
-}
+};
+
+export default GlobalError;

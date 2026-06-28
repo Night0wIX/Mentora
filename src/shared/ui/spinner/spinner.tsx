@@ -3,7 +3,7 @@ import { cn } from "@/shared/utils";
 import type { SpinnerProps } from "./spinner.types";
 import { spinnerVariants } from "./spinner.variants";
 
-export function Spinner({ className, size, label, ...props }: SpinnerProps) {
+export const Spinner = ({ className, size, label, ...props }: SpinnerProps) => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -31,4 +31,4 @@ export function Spinner({ className, size, label, ...props }: SpinnerProps) {
       />
     </svg>
   );
-}
+};

@@ -6,12 +6,12 @@ import { cn } from "@/shared/utils";
 import type { SkeletonProps } from "./skeleton.types";
 import { skeletonVariants } from "./skeleton.variants";
 
-export function Skeleton({
+export const Skeleton = ({
   className,
   shape,
   animated,
   ...props
-}: SkeletonProps) {
+}: SkeletonProps) => {
   const { reduceMotion } = useMotion();
   const isAnimated = animated ?? !reduceMotion;
 
@@ -26,4 +26,4 @@ export function Skeleton({
       {...props}
     />
   );
-}
+};

@@ -4,13 +4,13 @@ import { Logo } from "@/shared/ui/logo";
 
 import type { ErrorStateProps } from "./error-state.types";
 
-export function ErrorState({
+export const ErrorState = ({
   badge,
   title,
   description,
   actions,
   children,
-}: ErrorStateProps) {
+}: ErrorStateProps) => {
   const actionList = Children.toArray(actions);
 
   return (
@@ -36,4 +36,4 @@ export function ErrorState({
       <div className="mt-8 flex gap-3">{actionList}</div>
     </div>
   );
-}
+};

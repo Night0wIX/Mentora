@@ -11,7 +11,7 @@ import {
 } from "./theme-toggle.constants";
 import { ThemeToggleSkeleton } from "./theme-toggle.skeleton";
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { theme, setTheme } = useThemeTransition();
   const isHydrated = useIsHydrated();
 
@@ -61,4 +61,4 @@ export function ThemeToggle() {
       })}
     </div>
   );
-}
+};

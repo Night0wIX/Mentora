@@ -8,7 +8,7 @@ import { BUTTON_DEFAULT_LOADING_TEXT } from "./button.constants";
 import type { ButtonProps } from "./button.types";
 import { buttonVariants } from "./button.variants";
 
-export function Button({
+export const Button = ({
   ref,
   className,
   variant,
@@ -23,7 +23,7 @@ export function Button({
   disabled,
   children,
   ...props
-}: ButtonProps) {
+}: ButtonProps) => {
   const isDisabled = disabled || loading;
 
   // asChild is ignored when loading — button renders natively to show spinner
@@ -77,4 +77,4 @@ export function Button({
       </span>
     </button>
   );
-}
+};

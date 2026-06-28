@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Manage courses.",
 };
 
-export default function AdminCoursesPage() {
+const AdminCoursesPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold tracking-tight">
@@ -13,4 +13,6 @@ export default function AdminCoursesPage() {
       </h1>
     </div>
   );
-}
+};
+
+export default AdminCoursesPage;

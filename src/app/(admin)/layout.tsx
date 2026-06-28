@@ -2,7 +2,7 @@ import type { PropsWithChildren } from "react";
 
 import { AdminHeader } from "./admin/_components/admin-header";
 
-export default function AdminLayout({ children }: PropsWithChildren) {
+const AdminLayout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <AdminHeader />
@@ -11,4 +11,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       </main>
     </>
   );
-}
+};
+
+export default AdminLayout;

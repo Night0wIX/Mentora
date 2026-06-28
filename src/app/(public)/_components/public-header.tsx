@@ -33,7 +33,7 @@ function getAdminLink({ isAuthenticated, user }: typeof MOCK_AUTH_STATE) {
   return { href: ROUTES.login, label: "Admin login" };
 }
 
-export function PublicHeader() {
+export const PublicHeader = () => {
   const adminLink = getAdminLink(MOCK_AUTH_STATE);
 
   if (!adminLink) {
@@ -52,4 +52,4 @@ export function PublicHeader() {
       }
     />
   );
-}
+};

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Sign in required",
 };
 
-export default function Unauthorized() {
+const Unauthorized = () => {
   return (
     <CenteredLayout>
       <ErrorState
@@ -25,4 +25,6 @@ export default function Unauthorized() {
       />
     </CenteredLayout>
   );
-}
+};
+
+export default Unauthorized;

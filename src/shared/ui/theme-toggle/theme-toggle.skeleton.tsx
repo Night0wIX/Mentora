@@ -5,7 +5,7 @@ import {
   themeOptions,
 } from "./theme-toggle.constants";
 
-export function ThemeToggleSkeleton() {
+export const ThemeToggleSkeleton = () => {
   return (
     <div
       aria-hidden="true"
@@ -20,4 +20,4 @@ export function ThemeToggleSkeleton() {
       ))}
     </div>
   );
-}
+};

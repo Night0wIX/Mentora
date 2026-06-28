@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Access denied",
 };
 
-export default function Forbidden() {
+const Forbidden = () => {
   return (
     <CenteredLayout>
       <ErrorState
@@ -25,4 +25,6 @@ export default function Forbidden() {
       />
     </CenteredLayout>
   );
-}
+};
+
+export default Forbidden;

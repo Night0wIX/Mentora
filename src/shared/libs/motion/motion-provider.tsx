@@ -30,10 +30,10 @@ function readMotionState(): MotionState {
   };
 }
 
-export function MotionProvider({
+export const MotionProvider = ({
   children,
   overrideReduceMotion,
-}: MotionProviderProps) {
+}: MotionProviderProps) => {
   const [motionState, setMotionState] =
     useState<MotionState>(DEFAULT_MOTION_STATE);
 
@@ -43,13 +43,13 @@ export function MotionProvider({
 
     const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
 
-    const handleReducedMotionChange = (event: MediaQueryListEvent): void => {
+    const handleReducedMotionChange = (event: MediaQueryListEvent) => {
       setMotionState((prev) => ({ ...prev, reduceMotion: event.matches }));
     };
 
     let resizeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    const handleViewportResize = (): void => {
+    const handleViewportResize = () => {
       clearTimeout(resizeTimeoutId);
       resizeTimeoutId = setTimeout(() => {
         setMotionState((prev) => ({
@@ -82,7 +82,7 @@ export function MotionProvider({
       {children}
     </MotionContext.Provider>
   );
-}
+};
 
 export function useMotion(): MotionState {
   return useContext(MotionContext);

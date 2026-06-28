@@ -7,9 +7,7 @@ export const metadata: Metadata = {
   description: "Edit lesson content.",
 };
 
-export default async function AdminLessonEditorPage({
-  params,
-}: PageProps<LessonIdParams>) {
+const AdminLessonEditorPage = async ({ params }: PageProps<LessonIdParams>) => {
   const { courseId, lessonId } = await params;
 
   return (
@@ -21,4 +19,6 @@ export default async function AdminLessonEditorPage({
       <p className="text-muted-foreground">lessonId: {lessonId}</p>
     </div>
   );
-}
+};
+
+export default AdminLessonEditorPage;

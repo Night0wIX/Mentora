@@ -14,7 +14,7 @@ interface ErrorBoundaryProps {
   reset: () => void;
 }
 
-export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
+const ErrorBoundary = ({ error, reset }: ErrorBoundaryProps) => {
   return (
     <CenteredLayout>
       <ErrorState
@@ -48,4 +48,6 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
       </ErrorState>
     </CenteredLayout>
   );
-}
+};
+
+export default ErrorBoundary;

@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/shared/ui/theme-toggle";
 
 import type { HeaderProps } from "./header.types";
 
-export function Header({ actions }: HeaderProps) {
+export const Header = ({ actions }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-4 px-4 md:px-6">
@@ -34,4 +34,4 @@ export function Header({ actions }: HeaderProps) {
       </div>
     </header>
   );
-}
+};

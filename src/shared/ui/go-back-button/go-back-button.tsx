@@ -8,13 +8,13 @@ import { Button } from "@/shared/ui/button";
 import { GO_BACK_BUTTON_DEFAULT_LABEL } from "./go-back-button.constants";
 import type { GoBackButtonProps } from "./go-back-button.types";
 
-export function GoBackButton({
+export const GoBackButton = ({
   fallbackHref,
   variant = "outline",
   size = "sm",
   children = GO_BACK_BUTTON_DEFAULT_LABEL,
   ...props
-}: GoBackButtonProps) {
+}: GoBackButtonProps) => {
   const goBack = useGoBack({ fallbackHref });
 
   return (
@@ -28,4 +28,4 @@ export function GoBackButton({
       {children}
     </Button>
   );
-}
+};

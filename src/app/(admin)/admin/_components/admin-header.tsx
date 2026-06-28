@@ -7,7 +7,7 @@ import { ROUTES } from "@/shared/config";
 import { Button } from "@/shared/ui/button";
 import { Header } from "@/shared/ui/header";
 
-export function AdminHeader() {
+export const AdminHeader = () => {
   const onLogout = () => {}; // TODO: Replace with real data
 
   return (
@@ -34,4 +34,4 @@ export function AdminHeader() {
       }
     />
   );
-}
+};

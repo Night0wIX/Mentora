@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: "Page not found",
 };
 
-export default function NotFound() {
+const NotFound = () => {
   return (
     <CenteredLayout>
       <ErrorState
@@ -29,4 +29,6 @@ export default function NotFound() {
       />
     </CenteredLayout>
   );
-}
+};
+
+export default NotFound;

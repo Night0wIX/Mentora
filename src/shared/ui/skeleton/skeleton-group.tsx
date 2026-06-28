@@ -2,12 +2,12 @@ import { cn } from "@/shared/utils";
 
 import type { SkeletonGroupProps } from "./skeleton.types";
 
-export function SkeletonGroup({
+export const SkeletonGroup = ({
   label = "Loading content",
   className,
   children,
   ...props
-}: SkeletonGroupProps) {
+}: SkeletonGroupProps) => {
   return (
     <div
       role="status"
@@ -19,4 +19,4 @@ export function SkeletonGroup({
       {children}
     </div>
   );
-}
+};

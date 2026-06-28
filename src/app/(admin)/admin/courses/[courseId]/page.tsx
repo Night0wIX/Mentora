@@ -7,9 +7,7 @@ export const metadata: Metadata = {
   description: "Edit course details.",
 };
 
-export default async function AdminCourseDetailPage({
-  params,
-}: PageProps<CourseIdParams>) {
+const AdminCourseDetailPage = async ({ params }: PageProps<CourseIdParams>) => {
   const { courseId } = await params;
 
   return (
@@ -20,4 +18,6 @@ export default async function AdminCourseDetailPage({
       <p className="text-muted-foreground">courseId: {courseId}</p>
     </div>
   );
-}
+};
+
+export default AdminCourseDetailPage;

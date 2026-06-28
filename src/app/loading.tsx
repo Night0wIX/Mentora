@@ -1,7 +1,7 @@
 import { CenteredLayout } from "@/shared/ui/centered-layout";
 import { Spinner } from "@/shared/ui/spinner";
 
-export default function Loading() {
+const Loading = () => {
   return (
     <CenteredLayout>
       <div
@@ -14,4 +14,6 @@ export default function Loading() {
       </div>
     </CenteredLayout>
   );
-}
+};
+
+export default Loading;

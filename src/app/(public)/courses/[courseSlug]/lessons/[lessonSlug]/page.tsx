@@ -7,9 +7,7 @@ export const metadata: Metadata = {
   description: "Lesson content and materials.",
 };
 
-export default async function LessonPage({
-  params,
-}: PageProps<LessonSlugParams>) {
+const LessonPage = async ({ params }: PageProps<LessonSlugParams>) => {
   const { courseSlug, lessonSlug } = await params;
 
   return (
@@ -21,4 +19,6 @@ export default async function LessonPage({
       <p className="text-muted-foreground">lessonSlug: {lessonSlug}</p>
     </main>
   );
-}
+};
+
+export default LessonPage;

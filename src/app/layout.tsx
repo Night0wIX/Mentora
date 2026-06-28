@@ -8,7 +8,7 @@ import { BASE_METADATA, INTER } from "@/shared/config";
 
 export const metadata: Metadata = BASE_METADATA;
 
-export default function RootLayout({ children }: PropsWithChildren) {
+const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html lang="en" className={INTER.variable} suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col bg-background text-foreground font-sans antialiased">
@@ -16,4 +16,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
