@@ -4,8 +4,8 @@ import { LogOut, Store } from "lucide-react";
 import Link from "next/link";
 
 import { ROUTES } from "@/shared/config";
-import { Header } from "@/shared/ui/app-header";
 import { Button } from "@/shared/ui/button";
+import { Header } from "@/shared/ui/header";
 
 export function AdminHeader() {
   const onLogout = () => {}; // TODO: Replace with real data
