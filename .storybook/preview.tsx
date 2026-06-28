@@ -37,9 +37,9 @@ const withMotion: Decorator = (Story, context) => {
 const preview: Preview = {
   globalTypes: {
     theme: {
-      name: "Theme",
       description: "Global theme for components",
       toolbar: {
+        title: "Theme",
         icon: "mirror",
         items: [
           { value: "light", title: "Light", icon: "sun" },
@@ -49,12 +49,12 @@ const preview: Preview = {
       },
     },
     reduceMotion: {
-      name: "Reduce Motion",
       description: "Override reduced motion preference",
       toolbar: {
+        title: "Reduce Motion",
         icon: "transfer",
         items: [
-          { value: undefined, title: "System" },
+          { value: "system", title: "System" },
           { value: "reduce", title: "Reduce" },
           { value: "no-reduce", title: "No Reduce" },
         ],
@@ -65,7 +65,7 @@ const preview: Preview = {
 
   initialGlobals: {
     theme: "light",
-    reduceMotion: undefined,
+    reduceMotion: "system",
   },
 
   decorators: [withTheme, withMotion],

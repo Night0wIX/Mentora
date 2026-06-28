@@ -3,6 +3,7 @@
 
 # Testing
 /coverage
+/.vitest-cache
 
 # Storybook
 /storybook-static
