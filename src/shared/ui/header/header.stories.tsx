@@ -64,7 +64,6 @@ export const SingleAction: Story = {
 
 export const MultipleActions: Story = {
   name: "Actions — button group",
-  // Composite showcase — a11y tests individual stories instead.
   parameters: {
     a11y: { test: "todo" },
     docs: {

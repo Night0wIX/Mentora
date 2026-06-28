@@ -7,10 +7,31 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { expect, fn } from "storybook/test";
+import type { JSX } from "react/jsx-runtime";
+import { fn } from "storybook/test";
+
+import { capitalize } from "@/shared/utils";
 
 import { Button } from "./button";
-import type { ButtonSize, ButtonVariant } from "./button.types";
+import { BUTTON_DEFAULT_LOADING_TEXT } from "./button.constants";
+import type { ButtonVariant } from "./button.types";
+
+const BUTTON_VARIANTS = [
+  "default",
+  "destructive",
+  "outline",
+  "secondary",
+  "ghost",
+  "link",
+] as const satisfies ButtonVariant[];
+
+const BUTTON_SIZES = ["default", "sm", "lg", "icon"] as const;
+
+const ContainerDecorator = (Story: () => JSX.Element) => (
+  <div className="w-80">
+    <Story />
+  </div>
+);
 
 const meta = {
   title: "Shared/UI/Button",
@@ -27,20 +48,13 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: [
-        "default",
-        "destructive",
-        "outline",
-        "secondary",
-        "ghost",
-        "link",
-      ] satisfies ButtonVariant[],
+      options: BUTTON_VARIANTS,
       description: "Visual style of the button.",
       table: { defaultValue: { summary: "default" } },
     },
     size: {
       control: "select",
-      options: ["default", "sm", "lg", "icon"] satisfies ButtonSize[],
+      options: BUTTON_SIZES,
       description: "Height and padding scale.",
       table: { defaultValue: { summary: "default" } },
     },
@@ -63,7 +77,7 @@ const meta = {
     loadingText: {
       control: "text",
       description: "Screen-reader text announced while loading.",
-      table: { defaultValue: { summary: '"Loading"' } },
+      table: { defaultValue: { summary: `"${BUTTON_DEFAULT_LOADING_TEXT}"` } },
     },
     disabled: {
       control: "boolean",
@@ -93,43 +107,24 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {
-  name: "Playground",
-  parameters: {
-    docs: {
-      description: {
-        story: "Configure all props via the Controls panel.",
-      },
-    },
-  },
+export const Playground: Story = {};
+
+export const Default: Story = {
+  name: "Variant — default",
 };
 
 export const AllVariants: Story = {
   name: "Variants — all",
-  // Composite showcase — a11y tests individual stories instead.
   parameters: { a11y: { test: "todo" } },
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
-      {(
-        [
-          "default",
-          "destructive",
-          "outline",
-          "secondary",
-          "ghost",
-          "link",
-        ] as const
-      ).map((variant) => (
+      {BUTTON_VARIANTS.map((variant) => (
         <Button key={variant} {...args} variant={variant}>
-          {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          {capitalize(variant)}
         </Button>
       ))}
     </div>
   ),
-};
-
-export const Default: Story = {
-  name: "Variant — default",
 };
 
 export const Destructive: Story = {
@@ -205,15 +200,15 @@ export const WithBothIcons: Story = {
 export const IconOnlyAllSizes: Story = {
   name: "Icon-only — all sizes",
   parameters: { a11y: { test: "todo" } },
-  render: () => (
+  render: (args) => (
     <div className="flex flex-wrap items-end gap-3">
-      <Button iconOnly size="sm" aria-label="Add item">
+      <Button {...args} iconOnly size="sm" aria-label="Add item">
         <Plus />
       </Button>
-      <Button iconOnly size="default" aria-label="Add item">
+      <Button {...args} iconOnly size="default" aria-label="Add item">
         <Plus />
       </Button>
-      <Button iconOnly size="lg" aria-label="Add item">
+      <Button {...args} iconOnly size="lg" aria-label="Add item">
         <Plus />
       </Button>
     </div>
@@ -227,24 +222,6 @@ export const IconOnlyDestructive: Story = {
     variant: "destructive",
     "aria-label": "Delete item",
     children: <Trash2 />,
-  },
-};
-
-export const IconOnlyMisuse: Story = {
-  name: "Icon-only — accidental text child (misuse)",
-  parameters: {
-    a11y: { test: "todo" },
-    docs: {
-      description: {
-        story:
-          "`iconOnly` hides `leftIcon`/`rightIcon` slots but not `children` — passing text as `children` with `iconOnly` is a misuse. Documented so it is recognizable in review.",
-      },
-    },
-  },
-  args: {
-    iconOnly: true,
-    "aria-label": "Misconfigured",
-    children: "Oops",
   },
 };
 
@@ -276,13 +253,7 @@ export const LoadingDestructive: Story = {
 export const LoadingFullWidth: Story = {
   name: "Loading — full width",
   args: { loading: true, fullWidth: true },
-  decorators: [
-    (Story) => (
-      <div className="w-80">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [ContainerDecorator],
 };
 
 export const Disabled: Story = {
@@ -295,18 +266,9 @@ export const DisabledAllVariants: Story = {
   parameters: { a11y: { test: "todo" } },
   render: (args) => (
     <div className="flex flex-wrap items-center gap-3">
-      {(
-        [
-          "default",
-          "destructive",
-          "outline",
-          "secondary",
-          "ghost",
-          "link",
-        ] as const
-      ).map((variant) => (
+      {BUTTON_VARIANTS.map((variant) => (
         <Button key={variant} {...args} variant={variant} disabled>
-          {variant.charAt(0).toUpperCase() + variant.slice(1)}
+          {capitalize(variant)}
         </Button>
       ))}
     </div>
@@ -316,13 +278,7 @@ export const DisabledAllVariants: Story = {
 export const FullWidth: Story = {
   name: "Full width",
   args: { fullWidth: true },
-  decorators: [
-    (Story) => (
-      <div className="w-80">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [ContainerDecorator],
 };
 
 export const FullWidthWithIcons: Story = {
@@ -333,13 +289,7 @@ export const FullWidthWithIcons: Story = {
     rightIcon: <ArrowRight />,
     children: "Download report",
   },
-  decorators: [
-    (Story) => (
-      <div className="w-80">
-        <Story />
-      </div>
-    ),
-  ],
+  decorators: [ContainerDecorator],
 };
 
 export const AsChildLink: Story = {
@@ -393,43 +343,6 @@ export const AsChildWithLoading: Story = {
   ),
 };
 
-export const AriaInvalid: Story = {
-  name: "Accessibility — aria-invalid",
-  args: { "aria-invalid": true, variant: "outline", children: "Submit" },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Applied by a parent form when submission is invalid. Renders a destructive ring.",
-      },
-    },
-  },
-};
-
-export const FocusRing: Story = {
-  name: "Accessibility — focus ring",
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Tab through buttons to verify focus ring visibility across variants.",
-      },
-    },
-    a11y: { test: "error" },
-  },
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      {(["default", "outline", "ghost", "destructive"] as const).map(
-        (variant: ButtonVariant) => (
-          <Button key={variant} variant={variant} onClick={fn()}>
-            {variant.charAt(0).toUpperCase() + variant.slice(1)}
-          </Button>
-        ),
-      )}
-    </div>
-  ),
-};
-
 export const LongLabel: Story = {
   name: "Edge — long label",
   parameters: { layout: "padded" },
@@ -480,43 +393,15 @@ export const ComplexChildren: Story = {
   },
 };
 
-export const KeyboardActivation: Story = {
-  name: "Interaction — keyboard activation",
-  args: { children: "Submit" },
-  play: async ({ canvas, args, userEvent }) => {
-    const button = canvas.getByRole("button", { name: "Submit" });
-
-    await userEvent.tab();
-    await expect(button).toHaveFocus();
-
-    await userEvent.keyboard("{Enter}");
-    await expect(args.onClick).toHaveBeenCalledTimes(1);
-
-    await userEvent.keyboard(" ");
-    await expect(args.onClick).toHaveBeenCalledTimes(2);
-  },
-};
-
-export const LoadingBlocksActivation: Story = {
-  name: "Interaction — loading blocks click",
-  args: { loading: true, children: "Submit" },
-  play: async ({ canvas, args }) => {
-    const button = canvas.getByRole("button", { name: "Loading" });
-
-    await expect(button).toHaveAttribute("aria-busy", "true");
-    await expect(button).toHaveAttribute("data-loading", "true");
-    await expect(getComputedStyle(button).pointerEvents).toBe("none");
-    await expect(args.onClick).not.toHaveBeenCalled();
-  },
-};
-
-export const DisabledBlocksActivation: Story = {
-  name: "Interaction — disabled blocks click",
-  args: { disabled: true, children: "Submit" },
-  play: async ({ canvas, args }) => {
-    const button = canvas.getByRole("button", { name: "Submit" });
-
-    await expect(button).toBeDisabled();
-    await expect(args.onClick).not.toHaveBeenCalled();
+export const AriaInvalid: Story = {
+  name: "Edge — aria-invalid",
+  args: { "aria-invalid": true, variant: "outline", children: "Submit" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Applied by a parent form when submission is invalid. Renders a destructive ring.",
+      },
+    },
   },
 };

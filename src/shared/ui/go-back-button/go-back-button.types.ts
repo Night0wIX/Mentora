@@ -4,6 +4,7 @@ import type { Button } from "@/shared/ui/button";
 
 interface GoBackButtonOwnProps {
   fallbackHref?: string;
+  navigate?: (href: string) => void;
 }
 
 type GoBackButtonBaseProps = Extract<

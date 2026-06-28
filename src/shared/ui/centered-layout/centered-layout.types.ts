@@ -1,9 +1,8 @@
-import type { ComponentPropsWithRef, ElementType } from "react";
+import type { ComponentPropsWithRef } from "react";
 
-export type CenteredLayoutElement = Extract<
-  ElementType,
-  "main" | "div" | "section" | "article"
->;
+import type { CENTERED_LAYOUT_ELEMENTS } from "./centered-layout.constants";
+
+export type CenteredLayoutElement = (typeof CENTERED_LAYOUT_ELEMENTS)[number];
 
 interface CenteredLayoutOwnProps<T extends CenteredLayoutElement> {
   as?: T;

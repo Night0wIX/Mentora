@@ -10,12 +10,13 @@ import type { GoBackButtonProps } from "./go-back-button.types";
 
 export const GoBackButton = ({
   fallbackHref,
+  navigate,
   variant = "outline",
   size = "sm",
   children = GO_BACK_BUTTON_DEFAULT_LABEL,
   ...props
 }: GoBackButtonProps) => {
-  const goBack = useGoBack({ fallbackHref });
+  const goBack = useGoBack({ fallbackHref, navigate });
 
   return (
     <Button

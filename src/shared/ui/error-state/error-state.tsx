@@ -1,5 +1,3 @@
-import { Children } from "react";
-
 import { Logo } from "@/shared/ui/logo";
 
 import type { ErrorStateProps } from "./error-state.types";
@@ -11,7 +9,7 @@ export const ErrorState = ({
   actions,
   children,
 }: ErrorStateProps) => {
-  const actionList = Children.toArray(actions);
+  const actionList = [actions].flat().filter(Boolean);
 
   return (
     <div role="alert" className="flex flex-col items-center text-center">
@@ -33,7 +31,9 @@ export const ErrorState = ({
         {children}
       </div>
 
-      <div className="mt-8 flex gap-3">{actionList}</div>
+      {actionList.length > 0 && (
+        <div className="mt-8 flex gap-3">{actionList}</div>
+      )}
     </div>
   );
 };

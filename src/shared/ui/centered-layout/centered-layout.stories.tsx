@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { Button } from "@/shared/ui/button";
+import { createPlaceholderKeys } from "@/shared/utils";
 
 import { CenteredLayout } from "./centered-layout";
-import type { CenteredLayoutElement } from "./centered-layout.types";
+import { CENTERED_LAYOUT_ELEMENTS } from "./centered-layout.constants";
 
 const meta = {
   title: "Shared/UI/CenteredLayout",
@@ -13,15 +14,20 @@ const meta = {
     layout: "fullscreen",
     a11y: { test: "error" },
   },
+  args: {
+    children: (
+      <div className="flex flex-col items-center gap-2 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Page title</h1>
+        <p className="text-muted-foreground text-sm">
+          Supporting description that sits below the heading.
+        </p>
+      </div>
+    ),
+  },
   argTypes: {
     as: {
       control: "select",
-      options: [
-        "main",
-        "div",
-        "section",
-        "article",
-      ] satisfies CenteredLayoutElement[],
+      options: CENTERED_LAYOUT_ELEMENTS,
       description:
         "Underlying HTML element. Default `main` covers most full-page cases. Use `section` or `article` when a `<main>` landmark already exists in the tree. Use `div` only when no semantic role is needed.",
       table: { defaultValue: { summary: "main" } },
@@ -42,17 +48,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
-  name: "Playground",
-  args: {
-    children: (
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Page title</h1>
-        <p className="text-muted-foreground text-sm">
-          Supporting description that sits below the heading.
-        </p>
-      </div>
-    ),
-  },
   parameters: {
     docs: {
       description: {
@@ -63,58 +58,87 @@ export const Playground: Story = {
 };
 
 export const AsMain: Story = {
-  name: "As — main",
-  args: {
-    as: "main",
-    children: (
-      <p className="text-muted-foreground text-sm">
-        Rendered as <code>&lt;main&gt;</code> — the default page landmark.
-      </p>
-    ),
+  name: "Element — main",
+  args: { as: "main" },
+  parameters: {
+    docs: {
+      description: {
+        story: "Default page landmark. Use for top-level page content.",
+      },
+    },
   },
 };
 
 export const AsSection: Story = {
-  name: "As — section",
-  args: {
-    as: "section",
-    children: (
-      <p className="text-muted-foreground text-sm">
-        Rendered as <code>&lt;section&gt;</code> — use when a{" "}
-        <code>&lt;main&gt;</code> already exists in the layout.
-      </p>
-    ),
-  },
+  name: "Element — section",
+  args: { as: "section" },
   parameters: {
     docs: {
       description: {
         story:
-          "Appropriate for modal or drawer interiors that need a centered region inside an existing landmark.",
+          "Use when a `<main>` landmark already exists, e.g. centering content inside a modal or drawer.",
       },
     },
   },
 };
 
 export const AsArticle: Story = {
-  name: "As — article",
-  args: {
-    as: "article",
-    children: (
-      <p className="text-muted-foreground text-sm">
-        Rendered as <code>&lt;article&gt;</code> — self-contained content
-        region.
-      </p>
-    ),
+  name: "Element — article",
+  args: { as: "article" },
+  parameters: {
+    docs: {
+      description: {
+        story: "Self-contained content region, e.g. a single card or post.",
+      },
+    },
   },
 };
 
 export const AsDiv: Story = {
-  name: "As — div",
+  name: "Element — div",
+  args: { as: "div" },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "No semantic role. Use only when the parent already carries the correct landmark.",
+      },
+    },
+  },
+};
+
+export const CustomClassName: Story = {
+  name: "Custom — className override",
   args: {
-    as: "div",
+    className: "bg-muted",
+    children: (
+      <div className="flex max-w-sm flex-col items-center gap-2 text-center">
+        <h1 className="text-xl font-semibold tracking-tight">
+          Custom background
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Background overridden via <code>className</code>.
+        </p>
+      </div>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Any layout token — background, padding, min-height — can be overridden via `className`. `cn()` handles Tailwind class merging.",
+      },
+    },
+  },
+};
+
+export const NarrowContent: Story = {
+  name: "Edge — narrow content, no max-width set",
+  args: {
     children: (
       <p className="text-muted-foreground text-sm">
-        Rendered as <code>&lt;div&gt;</code> — no semantic role.
+        The layout itself sets no <code>max-w-*</code>; constrain width on the
+        inner wrapper as needed.
       </p>
     ),
   },
@@ -122,7 +146,33 @@ export const AsDiv: Story = {
     docs: {
       description: {
         story:
-          "Use only when the parent already carries the correct landmark and no additional semantics are needed.",
+          "The layout never applies its own max-width — content stretches to fill unless the consumer constrains it.",
+      },
+    },
+  },
+};
+
+export const LongContent: Story = {
+  name: "Edge — content taller than viewport",
+  args: {
+    children: (
+      <div className="flex max-w-sm flex-col items-center gap-4 text-center">
+        <h1 className="text-2xl font-semibold tracking-tight">Tall content</h1>
+        {createPlaceholderKeys(12).map((key, index) => (
+          <p key={key} className="text-muted-foreground text-sm">
+            Paragraph {index + 1} — confirms the layout scrolls naturally
+            instead of clipping when content exceeds <code>min-h-svh</code>.
+          </p>
+        ))}
+      </div>
+    ),
+  },
+  parameters: {
+    a11y: { test: "todo" },
+    docs: {
+      description: {
+        story:
+          "`min-h-svh` is a floor, not a cap — overflowing content scrolls the page rather than being clipped.",
       },
     },
   },
@@ -132,6 +182,7 @@ export const ErrorPage: Story = {
   name: "Usage — error page",
   parameters: {
     a11y: { test: "todo" },
+    controls: { disable: true },
     docs: {
       description: {
         story:
@@ -160,6 +211,7 @@ export const NotFoundPage: Story = {
   name: "Usage — 404 page",
   parameters: {
     a11y: { test: "todo" },
+    controls: { disable: true },
   },
   render: () => (
     <CenteredLayout>
@@ -167,7 +219,7 @@ export const NotFoundPage: Story = {
         <span className="text-muted-foreground text-5xl font-bold">404</span>
         <h1 className="text-xl font-semibold tracking-tight">Page not found</h1>
         <p className="text-muted-foreground text-sm">
-          The page you're looking for doesn't exist or has been moved.
+          The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <Button>Go home</Button>
       </div>
@@ -179,6 +231,7 @@ export const AuthForm: Story = {
   name: "Usage — auth form",
   parameters: {
     a11y: { test: "todo" },
+    controls: { disable: true },
     docs: {
       description: {
         story:
@@ -215,29 +268,4 @@ export const AuthForm: Story = {
       </div>
     </CenteredLayout>
   ),
-};
-
-export const CustomClassName: Story = {
-  name: "Custom — className override",
-  args: {
-    className: "bg-muted",
-    children: (
-      <div className="flex max-w-sm flex-col items-center gap-2 text-center">
-        <h1 className="text-xl font-semibold tracking-tight">
-          Custom background
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Background overridden via <code>className</code>.
-        </p>
-      </div>
-    ),
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Any layout token — background, padding, min-height — can be overridden via `className`. `cn()` handles Tailwind class merging.",
-      },
-    },
-  },
 };

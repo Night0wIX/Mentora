@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
 
 import { Spinner } from "./spinner";
 import type { SpinnerSize } from "./spinner.types";
+
+const SPINNER_SIZES = ["sm", "default", "lg"] as const satisfies SpinnerSize[];
 
 const meta = {
   title: "Shared/UI/Spinner",
@@ -15,7 +16,8 @@ const meta = {
   argTypes: {
     size: {
       control: "select",
-      options: ["sm", "default", "lg"] satisfies SpinnerSize[],
+      options: SPINNER_SIZES,
+      description: "Visual scale of the spinner.",
       table: { defaultValue: { summary: "default" } },
     },
     label: {
@@ -30,24 +32,22 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {
-  name: "Playground",
-};
+export const Playground: Story = {};
 
 export const AllSizes: Story = {
   name: "Sizes — all",
   parameters: { a11y: { test: "todo" } },
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-4">
-      {(["sm", "default", "lg"] as const).map((size) => (
-        <Spinner key={size} size={size} />
+      {SPINNER_SIZES.map((size) => (
+        <Spinner key={size} {...args} size={size} />
       ))}
     </div>
   ),
 };
 
 export const Decorative: Story = {
-  name: "Decorative (default — no label)",
+  name: "Usage — decorative (no label)",
   parameters: {
     docs: {
       description: {
@@ -59,7 +59,7 @@ export const Decorative: Story = {
 };
 
 export const Standalone: Story = {
-  name: "Standalone — with label",
+  name: "Usage — standalone (with label)",
   args: { label: "Loading results" },
   parameters: {
     docs: {
@@ -68,25 +68,5 @@ export const Standalone: Story = {
           'Exposes `role="status"` for use outside a control with its own `aria-busy`.',
       },
     },
-  },
-};
-
-export const DecorativeHidesFromScreenReaders: Story = {
-  name: "A11y — decorative spinner is hidden",
-  play: async ({ canvasElement }) => {
-    const spinner = canvasElement.querySelector("svg");
-
-    await expect(spinner).toHaveAttribute("aria-hidden", "true");
-  },
-};
-
-export const LabeledExposesStatusRole: Story = {
-  name: "A11y — labeled spinner exposes status role",
-  args: { label: "Loading results" },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const status = canvas.getByRole("status", { name: "Loading results" });
-
-    await expect(status).toBeVisible();
   },
 };

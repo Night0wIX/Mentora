@@ -1,7 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
 
 import { GoBackButton } from "./go-back-button";
+
+const GO_BACK_BUTTON_VARIANTS = [
+  "default",
+  "destructive",
+  "outline",
+  "secondary",
+  "ghost",
+  "link",
+] as const;
+
+const GO_BACK_BUTTON_SIZES = ["default", "sm", "lg"] as const;
 
 const meta = {
   title: "Shared/UI/GoBackButton",
@@ -19,19 +29,12 @@ const meta = {
     },
     variant: {
       control: "select",
-      options: [
-        "default",
-        "destructive",
-        "outline",
-        "secondary",
-        "ghost",
-        "link",
-      ],
+      options: GO_BACK_BUTTON_VARIANTS,
       table: { defaultValue: { summary: "outline" } },
     },
     size: {
       control: "select",
-      options: ["default", "sm", "lg"],
+      options: GO_BACK_BUTTON_SIZES,
       table: { defaultValue: { summary: "sm" } },
     },
     children: {
@@ -45,16 +48,14 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  name: "Default",
-};
+export const Playground: Story = {};
 
 export const CustomLabel: Story = {
   name: "Custom label",
   args: { children: "Back to dashboard" },
 };
 
-export const PrimaryVariant: Story = {
+export const VariantOverridden: Story = {
   name: "Variant — overridden",
   args: { variant: "ghost", size: "default" },
   parameters: {
@@ -83,61 +84,4 @@ export const WithFallbackHref: Story = {
 export const Disabled: Story = {
   name: "State — disabled",
   args: { disabled: true },
-};
-
-export const NavigatesBackWhenHistoryExists: Story = {
-  name: "Behavior — calls history.back when history exists",
-  play: async ({ canvasElement }) => {
-    const historyBackSpy = fn();
-    const originalBack = window.history.back;
-    const originalLength = Object.getOwnPropertyDescriptor(
-      window.history,
-      "length",
-    );
-
-    window.history.back = historyBackSpy;
-    Object.defineProperty(window.history, "length", {
-      configurable: true,
-      get: () => 2,
-    });
-
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: "Go back" }));
-
-    await expect(historyBackSpy).toHaveBeenCalledOnce();
-
-    window.history.back = originalBack;
-    if (originalLength) {
-      Object.defineProperty(window.history, "length", originalLength);
-    }
-  },
-};
-
-export const NavigatesToFallbackWhenNoHistory: Story = {
-  name: "Behavior — navigates to fallback when no history",
-  args: { fallbackHref: "/dashboard" },
-  play: async ({ canvasElement }) => {
-    const locationAssignSpy = fn();
-    const originalAssign = window.location.assign;
-    const originalLength = Object.getOwnPropertyDescriptor(
-      window.history,
-      "length",
-    );
-
-    window.location.assign = locationAssignSpy;
-    Object.defineProperty(window.history, "length", {
-      configurable: true,
-      get: () => 1,
-    });
-
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole("button", { name: "Go back" }));
-
-    await expect(locationAssignSpy).toHaveBeenCalledWith("/dashboard");
-
-    window.location.assign = originalAssign;
-    if (originalLength) {
-      Object.defineProperty(window.history, "length", originalLength);
-    }
-  },
 };

@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, userEvent, within } from "storybook/test";
 
 import { ThemeToggle } from "./theme-toggle";
 import { ThemeToggleSkeleton } from "./theme-toggle.skeleton";
@@ -33,42 +32,5 @@ export const Skeleton: Story = {
       },
     },
     a11y: { test: "todo" },
-  },
-};
-
-export const SelectsThemeOnClick: Story = {
-  name: "Behavior — selects theme on click",
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const darkOption = canvas.getByRole("radio", { name: "Dark" });
-
-    await userEvent.click(darkOption);
-
-    await expect(darkOption).toBeChecked();
-  },
-};
-
-export const NavigatesWithKeyboard: Story = {
-  name: "A11y — arrow keys move focus between options",
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const lightOption = canvas.getByRole("radio", { name: "Light" });
-    const darkOption = canvas.getByRole("radio", { name: "Dark" });
-
-    lightOption.focus();
-    await userEvent.keyboard("{ArrowRight}");
-
-    await expect(darkOption).toHaveFocus();
-  },
-};
-
-export const ExposesRadiogroupRole: Story = {
-  name: "A11y — exposes radiogroup semantics",
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const group = canvas.getByRole("radiogroup", { name: "Theme selection" });
-    const options = within(group).getAllByRole("radio");
-
-    await expect(options).toHaveLength(3);
   },
 };

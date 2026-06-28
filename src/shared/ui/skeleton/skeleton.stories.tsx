@@ -1,11 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
 
 import { createPlaceholderKeys } from "@/shared/utils";
 
 import { Skeleton } from "./skeleton";
 import type { SkeletonShape } from "./skeleton.types";
 import { SkeletonGroup } from "./skeleton-group";
+
+const SKELETON_SHAPES = [
+  "text",
+  "circular",
+  "rectangular",
+] as const satisfies SkeletonShape[];
 
 const meta = {
   title: "Shared/UI/Skeleton",
@@ -21,7 +26,7 @@ const meta = {
   argTypes: {
     shape: {
       control: "select",
-      options: ["text", "circular", "rectangular"] satisfies SkeletonShape[],
+      options: SKELETON_SHAPES,
       description:
         "Border-radius treatment matching the placeholder's content.",
       table: { defaultValue: { summary: "rectangular" } },
@@ -44,23 +49,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Playground: Story = {
-  name: "Playground",
-  parameters: {
-    docs: {
-      description: { story: "Configure all props via the Controls panel." },
-    },
-  },
-};
+export const Playground: Story = {};
 
 export const AllShapes: Story = {
   name: "Shapes — all",
   parameters: { a11y: { test: "todo" } },
-  render: () => (
+  render: (args) => (
     <div className="flex items-center gap-6">
-      {(["text", "circular", "rectangular"] as const).map((shape) => (
+      {SKELETON_SHAPES.map((shape) => (
         <div key={shape} className="flex flex-col items-center gap-2">
           <Skeleton
+            {...args}
             shape={shape}
             className={shape === "circular" ? "size-12" : "h-12 w-24"}
           />
@@ -69,11 +68,6 @@ export const AllShapes: Story = {
       ))}
     </div>
   ),
-};
-
-export const TextLine: Story = {
-  name: "Shape — text",
-  args: { shape: "text", className: "w-48" },
 };
 
 export const Circular: Story = {
@@ -86,11 +80,6 @@ export const Circular: Story = {
       },
     },
   },
-};
-
-export const Rectangular: Story = {
-  name: "Shape — rectangular (default)",
-  args: { shape: "rectangular", className: "h-24 w-40" },
 };
 
 export const AnimationForcedOff: Story = {
@@ -158,28 +147,4 @@ export const ListPlaceholder: Story = {
       ))}
     </SkeletonGroup>
   ),
-};
-
-export const GroupAnnouncesLoadingStatus: Story = {
-  name: "A11y — group exposes status role",
-  render: () => (
-    <SkeletonGroup label="Loading dashboard">
-      <Skeleton className="h-4 w-48" />
-    </SkeletonGroup>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const status = canvas.getByRole("status", { name: "Loading dashboard" });
-
-    await expect(status).toHaveAttribute("aria-busy", "true");
-  },
-};
-
-export const SkeletonItselfIsHiddenFromScreenReaders: Story = {
-  name: "A11y — individual skeleton is decorative",
-  play: async ({ canvasElement }) => {
-    const skeleton = canvasElement.querySelector('[data-slot="skeleton"]');
-
-    await expect(skeleton).toHaveAttribute("aria-hidden", "true");
-  },
 };

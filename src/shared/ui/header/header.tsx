@@ -28,8 +28,12 @@ export const Header = ({ actions }: HeaderProps) => {
           className="flex items-center gap-2 md:gap-3"
         >
           <ThemeToggle />
-          <div aria-hidden="true" className="h-4 w-px bg-border" />
-          {actions}
+
+          {actions && (
+            <>
+              <div aria-hidden className="h-4 w-px bg-border" /> {actions}
+            </>
+          )}
         </nav>
       </div>
     </header>

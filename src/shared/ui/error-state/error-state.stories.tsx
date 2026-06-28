@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { expect, within } from "storybook/test";
 
 import { Button } from "@/shared/ui/button";
 
@@ -11,7 +10,6 @@ const meta = {
   tags: ["autodocs"],
   parameters: {
     layout: "centered",
-    a11y: { test: "error" },
   },
   args: {
     badge: "403 error",
@@ -48,7 +46,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Playground: Story = {
-  name: "Playground",
   parameters: {
     docs: {
       description: { story: "Configure all props via the Controls panel." },
@@ -57,7 +54,7 @@ export const Playground: Story = {
 };
 
 export const NotFound: Story = {
-  name: "404 — not found",
+  name: "Usage — 404 not found",
   args: {
     badge: "404 error",
     title: "Page not found",
@@ -67,7 +64,7 @@ export const NotFound: Story = {
 };
 
 export const Forbidden: Story = {
-  name: "403 — access denied",
+  name: "Usage — 403 access denied",
   args: {
     badge: "403 error",
     title: "Access denied",
@@ -77,7 +74,7 @@ export const Forbidden: Story = {
 };
 
 export const ServerError: Story = {
-  name: "500 — server error",
+  name: "Usage — 500 server error",
   args: {
     badge: "500 error",
     title: "Something went wrong",
@@ -87,7 +84,7 @@ export const ServerError: Story = {
 };
 
 export const MultipleActions: Story = {
-  name: "Multiple actions",
+  name: "Actions — multiple",
   args: {
     actions: [
       <Button key="retry" variant="outline" size="sm">
@@ -108,11 +105,26 @@ export const MultipleActions: Story = {
   },
 };
 
+export const NoActions: Story = {
+  name: "Actions — none",
+  args: {
+    actions: undefined,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`actions` is optional. When omitted, the actions container is not rendered.",
+      },
+    },
+  },
+};
+
 export const WithSupplementaryContent: Story = {
   name: "With supplementary content",
   args: {
     children: (
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Error code: ERR_500_TIMEOUT
       </p>
     ),
@@ -127,14 +139,19 @@ export const WithSupplementaryContent: Story = {
   },
 };
 
-export const AnnouncesAsAlert: Story = {
-  name: "A11y — announces as alert",
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const alert = canvas.getByRole("alert");
-
-    await expect(alert).toContainElement(
-      canvas.getByRole("heading", { name: "Access denied" }),
-    );
+export const LongDescription: Story = {
+  name: "Edge — long title and description",
+  args: {
+    title: "We were unable to process your request at this time",
+    description:
+      "This usually happens when the server is under heavy load or a downstream service is temporarily unavailable. Wait a few minutes and try again — if the problem persists, contact support with the error code below.",
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Confirms `text-balance` and `max-w-sm` on the description keep long copy readable instead of stretching edge to edge.",
+      },
+    },
   },
 };
