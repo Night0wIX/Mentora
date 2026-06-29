@@ -61,7 +61,7 @@
     "@vitest/browser-playwright": "^4.1.9",
     "@vitest/coverage-v8": "^4.1.9",
     "babel-plugin-react-compiler": "^1.0.0",
-    "knip": "^6.22.0",
+    "knip": "^6.23.0",
     "lefthook": "^2.1.9",
     "playwright": "^1.61.1",
     "react-docgen-typescript": "^2.4.0",
