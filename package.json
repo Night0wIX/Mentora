@@ -65,7 +65,7 @@
     "lefthook": "^2.1.9",
     "playwright": "^1.61.1",
     "react-docgen-typescript": "^2.4.0",
-    "release-it": "^20.2.0",
+    "release-it": "^20.2.1",
     "shadcn": "^4.11.0",
     "storybook": "^10.4.6",
     "tailwindcss": "^4.3.1",
