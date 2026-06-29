@@ -4,10 +4,10 @@ import type { CENTERED_LAYOUT_ELEMENTS } from "./centered-layout.constants";
 
 export type CenteredLayoutElement = (typeof CENTERED_LAYOUT_ELEMENTS)[number];
 
-interface CenteredLayoutOwnProps<T extends CenteredLayoutElement> {
-  as?: T;
+interface CenteredLayoutOwnProps<TRoot extends CenteredLayoutElement> {
+  as?: TRoot;
 }
 
-export type CenteredLayoutProps<T extends CenteredLayoutElement = "main"> =
-  CenteredLayoutOwnProps<T> &
-    Omit<ComponentPropsWithRef<T>, keyof CenteredLayoutOwnProps<T>>;
+export type CenteredLayoutProps<TRoot extends CenteredLayoutElement = "main"> =
+  CenteredLayoutOwnProps<TRoot> &
+    Omit<ComponentPropsWithRef<TRoot>, keyof CenteredLayoutOwnProps<TRoot>>;

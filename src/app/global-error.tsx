@@ -2,7 +2,7 @@
 
 import "@/styles/index.css";
 
-import { INTER } from "@/shared/config";
+import { INTER, SITE_CONFIG } from "@/shared/config";
 import { Button } from "@/shared/ui/button";
 
 interface GlobalErrorProps {
@@ -11,7 +11,11 @@ interface GlobalErrorProps {
 
 const GlobalError = ({ reset }: GlobalErrorProps) => {
   return (
-    <html lang="en" className={INTER.variable} suppressHydrationWarning>
+    <html
+      lang={SITE_CONFIG.locale}
+      className={INTER.variable}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-dvh flex-col items-center justify-center bg-background px-6 py-24 text-center font-sans text-foreground antialiased">
         <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           Critical error

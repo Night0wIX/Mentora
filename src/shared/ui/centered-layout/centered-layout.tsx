@@ -7,12 +7,12 @@ import type {
   CenteredLayoutProps,
 } from "./centered-layout.types";
 
-export const CenteredLayout = <T extends CenteredLayoutElement = "main">({
+export const CenteredLayout = <TRoot extends CenteredLayoutElement = "main">({
   as,
   className,
   children,
   ...props
-}: CenteredLayoutProps<T>) => {
+}: CenteredLayoutProps<TRoot>) => {
   const Root = (as ?? "main") as ElementType;
 
   return (

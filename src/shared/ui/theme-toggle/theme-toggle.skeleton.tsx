@@ -9,7 +9,7 @@ export const ThemeToggleSkeleton = () => {
   return (
     <div
       aria-hidden="true"
-      className="inline-flex items-center gap-1 rounded-full border bg-muted p-1"
+      className="inline-flex items-center gap-1 rounded-full border bg-background p-1"
     >
       {themeOptions.map(({ value }) => (
         <Skeleton

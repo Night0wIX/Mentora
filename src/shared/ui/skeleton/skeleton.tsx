@@ -1,6 +1,3 @@
-"use client";
-
-import { useMotion } from "@/shared/libs/motion";
 import { cn } from "@/shared/utils";
 
 import type { SkeletonProps } from "./skeleton.types";
@@ -12,17 +9,11 @@ export const Skeleton = ({
   animated,
   ...props
 }: SkeletonProps) => {
-  const { reduceMotion } = useMotion();
-  const isAnimated = animated ?? !reduceMotion;
-
   return (
     <div
       data-slot="skeleton"
       aria-hidden="true"
-      className={cn(
-        skeletonVariants({ shape, animated: isAnimated }),
-        className,
-      )}
+      className={cn(skeletonVariants({ shape, animated }), className)}
       {...props}
     />
   );

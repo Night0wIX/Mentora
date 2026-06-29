@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { flushSync } from "react-dom";
 
 import {
   MOTION_DURATION_DESKTOP_S,
@@ -40,7 +41,9 @@ export function useThemeTransition() {
     );
 
     doc.startViewTransition(() => {
-      setTheme(next);
+      flushSync(() => {
+        setTheme(next);
+      });
     });
   };
 

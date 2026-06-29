@@ -16,3 +16,19 @@
 [data-slot="button"] {
   touch-action: manipulation; /* Fix for double click on ios */
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-slot="spinner"] {
+    animation-duration: 1.2s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

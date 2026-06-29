@@ -9,8 +9,6 @@ export const ErrorState = ({
   actions,
   children,
 }: ErrorStateProps) => {
-  const actionList = [actions].flat().filter(Boolean);
-
   return (
     <div role="alert" className="flex flex-col items-center text-center">
       <Logo className="size-20" />
@@ -31,9 +29,7 @@ export const ErrorState = ({
         {children}
       </div>
 
-      {actionList.length > 0 && (
-        <div className="mt-8 flex gap-3">{actionList}</div>
-      )}
+      {actions && <div className="mt-8 flex gap-3">{actions}</div>}
     </div>
   );
 };

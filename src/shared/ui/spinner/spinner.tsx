@@ -7,6 +7,7 @@ export const Spinner = ({ className, size, label, ...props }: SpinnerProps) => {
   return (
     <svg
       viewBox="0 0 24 24"
+      data-slot="spinner"
       fill="none"
       role={label ? "status" : undefined}
       aria-label={label}

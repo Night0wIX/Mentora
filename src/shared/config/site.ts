@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const SITE_CONFIG = {
   name: "Mentora",
   description: "Course management platform",
-  locale: "uk_UA",
+  locale: "en",
 } as const;
 
 export const BASE_METADATA: Metadata = {

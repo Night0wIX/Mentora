@@ -1,7 +1,13 @@
 "use client";
 
 import type { PropsWithChildren } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 
 interface MotionState {
   reduceMotion: boolean;
@@ -37,10 +43,11 @@ export const MotionProvider = ({
   const [motionState, setMotionState] =
     useState<MotionState>(DEFAULT_MOTION_STATE);
 
-  useEffect(() => {
-    // Re-sync in case the initial snapshot was taken during SSR
+  useLayoutEffect(() => {
     setMotionState(readMotionState());
+  }, []);
 
+  useEffect(() => {
     const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
 
     const handleReducedMotionChange = (event: MediaQueryListEvent) => {

@@ -23,7 +23,7 @@ export const ThemeToggle = () => {
     <div
       role="radiogroup"
       aria-label="Theme selection"
-      className="inline-flex items-center gap-1 rounded-full border bg-muted p-1"
+      className="inline-flex items-center gap-1 rounded-full border bg-background p-1"
     >
       {themeOptions.map(({ value, label, icon: Icon }) => {
         const isActive = theme === value;
@@ -36,7 +36,7 @@ export const ThemeToggle = () => {
               "relative flex cursor-pointer items-center justify-center rounded-full transition-colors",
               THEME_TOGGLE_BUTTON_SIZE_CLASS,
               isActive
-                ? "bg-background text-foreground shadow-sm"
+                ? "bg-muted text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
