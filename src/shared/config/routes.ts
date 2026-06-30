@@ -1,13 +1,26 @@
+import { buildUrl } from "@/shared/libs/url";
+
 export const ROUTES = {
   home: "/",
   login: "/login",
 
-  course: (courseSlug: string) => `/courses/${courseSlug}`,
+  course: (courseSlug: string) =>
+    buildUrl("/courses/:courseSlug", { courseSlug }),
+
   lesson: (courseSlug: string, lessonSlug: string) =>
-    `/courses/${courseSlug}/lessons/${lessonSlug}`,
+    buildUrl("/courses/:courseSlug/lessons/:lessonSlug", {
+      courseSlug,
+      lessonSlug,
+    }),
 
   adminCourses: "/admin/courses",
-  adminCourse: (courseId: string) => `/admin/courses/${courseId}`,
+
+  adminCourse: (courseId: string) =>
+    buildUrl("/admin/courses/:courseId", { courseId }),
+
   adminLesson: (courseId: string, lessonId: string) =>
-    `/admin/courses/${courseId}/lessons/${lessonId}`,
+    buildUrl("/admin/courses/:courseId/lessons/:lessonId", {
+      courseId,
+      lessonId,
+    }),
 } as const;
