@@ -1,20 +1,37 @@
 import type { Metadata } from "next";
 
 import { SITE_CONFIG } from "@/shared/config";
-import { Skeleton } from "@/shared/ui/skeleton";
+
+import {
+  CatalogEmptyState,
+  CourseCard,
+  CourseCardGrid,
+  getCourses,
+} from "@/modules/course";
 
 export const metadata: Metadata = {
   title: "Course catalog",
   description: `Browse the full course catalog on ${SITE_CONFIG.name}.`,
 };
 
-const CourseCatalogPage = () => {
+const CourseCatalogPage = async () => {
+  const courses = await getCourses();
+  const publishedCourses = courses.filter(
+    (course) => course.status === "published",
+  );
+
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-4 py-6 md:px-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Course catalog</h1>
-      <p className="text-muted-foreground">Catalog page</p>
-      <Skeleton className="h-12 w-24" />
-    </main>
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 md:px-6">
+      {publishedCourses.length === 0 ? (
+        <CatalogEmptyState />
+      ) : (
+        <CourseCardGrid>
+          {publishedCourses.map((course, index) => (
+            <CourseCard key={course.id} course={course} index={index} />
+          ))}
+        </CourseCardGrid>
+      )}
+    </div>
   );
 };
 
