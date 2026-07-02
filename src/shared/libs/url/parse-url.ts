@@ -1,24 +1,31 @@
 import type {
   ParsedUrl,
-  ParseQueryParamsOptions,
+  ParseUrlArguments,
   SplitPathAndSearch,
 } from "@/shared/types";
 
-import { URL_PATH_AND_QUERY_SEPARATOR } from "./constants";
+import { PATH_QUERY_SEPARATOR } from "./constants";
 import { extractPathParams } from "./path";
 import { parseQueryParams } from "./query";
 
-function splitPathAndSearch(actualUrl: string): SplitPathAndSearch {
-  const [pathname, search = ""] = actualUrl.split(URL_PATH_AND_QUERY_SEPARATOR);
+function splitPathAndSearch(url: string): SplitPathAndSearch {
+  const separatorIndex = url.indexOf(PATH_QUERY_SEPARATOR);
 
-  return { pathname, search };
+  if (separatorIndex === -1) {
+    return { pathname: url, search: "" };
+  }
+
+  return {
+    pathname: url.slice(0, separatorIndex),
+    search: url.slice(separatorIndex + 1),
+  };
 }
 
-export function parseUrl(
-  template: string,
-  actualUrl: string,
-  queryOptions?: ParseQueryParamsOptions,
-): ParsedUrl | null {
+export function parseUrl({
+  template,
+  actualUrl,
+  queryOptions,
+}: ParseUrlArguments): ParsedUrl | null {
   const { pathname, search } = splitPathAndSearch(actualUrl);
 
   const pathParams = extractPathParams(template, pathname);

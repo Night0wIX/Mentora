@@ -10,7 +10,7 @@ interface UseGoBackOptions {
 export function useGoBack({
   fallbackHref,
   navigate = (href) => window.location.assign(href),
-}: UseGoBackOptions = {}) {
+}: UseGoBackOptions = {}): () => void {
   return useCallback(() => {
     const hasNavigableHistory = window.history.length > 1;
 

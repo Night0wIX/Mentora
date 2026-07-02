@@ -1,13 +1,8 @@
-export type { NextError } from "./next";
+export type { EmptyParams, NextError, PageProps } from "./next";
 export type {
-  CourseIdParams,
-  CourseSlugParams,
-  LessonIdParams,
-  LessonSlugParams,
-  PageProps,
-} from "./page-params";
-export type {
+  CatchAllPathModifier,
   ExtractedPathParams,
+  ExtractedPathParamValue,
   PathParams,
   PathParamValue,
   PathSegmentMatch,
@@ -28,6 +23,7 @@ export type {
   BuildUrlArguments,
   BuildUrlOptions,
   ParsedUrl,
+  ParseUrlArguments,
   SplitPathAndSearch,
   SplitUrl,
 } from "./url";

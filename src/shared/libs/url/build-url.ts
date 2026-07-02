@@ -1,14 +1,9 @@
-import type {
-  BuildUrlOptions,
-  PathParams,
-  QueryParams,
-  SplitUrl,
-} from "@/shared/types";
+import type { BuildUrlArguments, SplitUrl } from "@/shared/types";
 
 import {
   ABSOLUTE_URL_SCHEME_PATTERN,
-  QUERY_STRING_SEPARATOR_FOR_EXISTING_QUERY,
-  QUERY_STRING_SEPARATOR_FOR_NEW_QUERY,
+  PATH_QUERY_SEPARATOR,
+  QUERY_PARAM_SEPARATOR,
 } from "./constants";
 import { applyPathParams } from "./path";
 import { serializeQueryParams } from "./query";
@@ -27,42 +22,31 @@ function splitOriginFromPath(path: string): SplitUrl {
   };
 }
 
-function resolvePathname(
-  pathname: string,
-  pathParams: PathParams | undefined,
-): string {
-  return pathParams ? applyPathParams(pathname, pathParams) : pathname;
-}
-
-function resolveQueryString(
-  query: QueryParams | undefined,
-  options: BuildUrlOptions | undefined,
-): string {
-  return query ? serializeQueryParams(query, options ?? {}) : "";
-}
-
 function appendQueryString(pathname: string, queryString: string): string {
   if (!queryString) {
     return pathname;
   }
 
-  const separator = pathname.includes("?")
-    ? QUERY_STRING_SEPARATOR_FOR_EXISTING_QUERY
-    : QUERY_STRING_SEPARATOR_FOR_NEW_QUERY;
+  const separator = pathname.includes(PATH_QUERY_SEPARATOR)
+    ? QUERY_PARAM_SEPARATOR
+    : PATH_QUERY_SEPARATOR;
 
   return `${pathname}${separator}${queryString}`;
 }
 
-export function buildUrl(
-  path: string,
-  pathParams?: PathParams,
-  query?: QueryParams,
-  options?: BuildUrlOptions,
-): string {
+export function buildUrl({
+  path,
+  pathParams,
+  query,
+  options,
+}: BuildUrlArguments): string {
   const { origin, pathname, hash } = splitOriginFromPath(path);
 
-  const resolvedPathname = resolvePathname(pathname, pathParams);
-  const queryString = resolveQueryString(query, options);
+  const resolvedPathname = pathParams
+    ? applyPathParams(pathname, pathParams)
+    : pathname;
+
+  const queryString = query ? serializeQueryParams(query, options) : "";
   const fullPathname = appendQueryString(resolvedPathname, queryString);
 
   return `${origin}${fullPathname}${hash}`;

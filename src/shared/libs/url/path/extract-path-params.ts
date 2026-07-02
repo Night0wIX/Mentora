@@ -1,4 +1,8 @@
-import type { ExtractedPathParams, PathSegmentMatch } from "@/shared/types";
+import type {
+  CatchAllPathModifier,
+  ExtractedPathParams,
+  PathSegmentMatch,
+} from "@/shared/types";
 
 import {
   isCatchAllModifier,
@@ -30,7 +34,7 @@ function matchLiteralSegment(
 
 function matchCatchAllSegment(
   parameterName: string,
-  modifier: "*" | "+",
+  modifier: CatchAllPathModifier,
   pathSegments: string[],
   pathIndex: number,
   remainingTemplateSegmentCount: number,

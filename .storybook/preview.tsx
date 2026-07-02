@@ -6,9 +6,11 @@ import { MotionProvider } from "../src/shared/libs/motion";
 import { ThemeProvider } from "../src/shared/libs/theme";
 
 // Applies dark/light class to <html> — Storybook iframe skips Next.js layout.
-const withTheme: Decorator = (Story) => {
+const withTheme: Decorator = (Story, context) => {
+  const theme = context.globals.theme as "light" | "dark";
+
   return (
-    <ThemeProvider>
+    <ThemeProvider forcedTheme={theme}>
       <div className={`${INTER.variable} font-sans antialiased`}>
         <Story />
       </div>

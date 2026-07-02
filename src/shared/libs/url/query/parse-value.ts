@@ -5,11 +5,7 @@ function isBlank(raw: string): boolean {
 }
 
 export function parseAsString(raw: string | null): string | undefined {
-  if (raw === null) {
-    return undefined;
-  }
-
-  return raw;
+  return raw ?? undefined;
 }
 
 export function parseAsNumber(raw: string | null): number | undefined {
@@ -27,11 +23,13 @@ export function parseAsBoolean(raw: string | null): boolean | undefined {
     return undefined;
   }
 
-  if (TRUE_BOOLEAN_TOKENS.has(raw)) {
+  const normalized = raw.trim();
+
+  if (TRUE_BOOLEAN_TOKENS.has(normalized)) {
     return true;
   }
 
-  if (FALSE_BOOLEAN_TOKENS.has(raw)) {
+  if (FALSE_BOOLEAN_TOKENS.has(normalized)) {
     return false;
   }
 
@@ -43,9 +41,21 @@ export function parseAsDate(raw: string | null): Date | undefined {
     return undefined;
   }
 
-  const parsedDate = new Date(raw);
+  const parsedDate = new Date(raw.trim());
 
   return Number.isNaN(parsedDate.getTime()) ? undefined : parsedDate;
+}
+
+export function parseAsEnum<const TValues extends readonly string[]>(
+  raw: string | null,
+  allowedValues: TValues,
+): TValues[number] | undefined {
+  if (raw === null) return undefined;
+
+  const normalized = raw.trim();
+  return (allowedValues as readonly string[]).includes(normalized)
+    ? (normalized as TValues[number])
+    : undefined;
 }
 
 export function parseAsGuessedPrimitive(
@@ -55,18 +65,14 @@ export function parseAsGuessedPrimitive(
     return undefined;
   }
 
-  if (TRUE_BOOLEAN_TOKENS.has(raw)) {
-    return true;
+  const asBoolean = parseAsBoolean(raw);
+  if (asBoolean !== undefined) {
+    return asBoolean;
   }
 
-  if (FALSE_BOOLEAN_TOKENS.has(raw)) {
-    return false;
-  }
-
-  const parsedNumber = parseAsNumber(raw);
-
-  if (parsedNumber !== undefined) {
-    return parsedNumber;
+  const asNumber = parseAsNumber(raw);
+  if (asNumber !== undefined) {
+    return asNumber;
   }
 
   return raw;

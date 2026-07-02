@@ -34,7 +34,7 @@
                 "message": "Import only from the UI component barrel (@/shared/ui/X). Deep imports into component internals are forbidden. If the export you need is not in index.ts, add it there."
               },
               {
-                "group": ["@/shared/libs/*/*", "@/shared/libs/*/*/**"],
+                "group": ["@/shared/libs/*/*/**"],
                 "message": "Import only from the lib topic barrel (@/shared/libs/X). Deep imports into lib internals are forbidden. If the export you need is not in index.ts, add it there."
               },
               {

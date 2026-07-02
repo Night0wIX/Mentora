@@ -1,7 +1,11 @@
-const RELATIVE_TIME_DIVISIONS: {
+import { SITE_CONFIG } from "../config";
+
+interface RelativeTimeDivision {
   amount: number;
   unit: Intl.RelativeTimeFormatUnit;
-}[] = [
+}
+
+const RELATIVE_TIME_DIVISIONS: RelativeTimeDivision[] = [
   { amount: 60, unit: "seconds" },
   { amount: 60, unit: "minutes" },
   { amount: 24, unit: "hours" },
@@ -20,7 +24,7 @@ export interface RelativeDate {
 
 export function formatRelativeDate(
   isoDate: string,
-  locale = "en",
+  locale: string = SITE_CONFIG.locale,
 ): RelativeDate {
   const date = new Date(isoDate);
 
@@ -29,13 +33,13 @@ export function formatRelativeDate(
   }
 
   const dateTime = date.toISOString();
+  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "always" });
+
   let duration = (date.getTime() - Date.now()) / 1000;
 
   if (Math.abs(duration) < JUST_NOW_THRESHOLD_S) {
-    return { relative: "Just now", dateTime };
+    return { relative: formatter.format(0, "seconds"), dateTime };
   }
-
-  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "always" });
 
   for (const division of RELATIVE_TIME_DIVISIONS) {
     if (Math.abs(duration) < division.amount) {

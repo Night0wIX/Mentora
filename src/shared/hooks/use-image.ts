@@ -13,33 +13,42 @@ interface UseImageOptions {
   blurDataURL?: string;
 }
 
+interface ResolvedImageProps {
+  src: string;
+  alt: string;
+  priority: boolean;
+  placeholder: "blur" | "empty";
+  blurDataURL: string | undefined;
+  onLoad: () => void;
+  onError: () => void;
+}
+
 interface UseImageReturn {
   status: ImageLoadingStatus;
   isLoading: boolean;
   isLoaded: boolean;
   isError: boolean;
   shimmerVisible: boolean;
-  imageProps: {
-    src: string;
-    alt: string;
-    priority: boolean;
-    placeholder: "blur" | "empty";
-    blurDataURL: string | undefined;
-    onLoad: () => void;
-    onError: () => void;
-  } | null;
+  imageProps: ResolvedImageProps | null;
 }
 
+const LOADED_URL_CACHE_MAX_SIZE = 500;
 const loadedUrlCache = new Set<string>();
+
+function rememberLoadedUrl(url: string): void {
+  if (loadedUrlCache.has(url)) return;
+
+  if (loadedUrlCache.size >= LOADED_URL_CACHE_MAX_SIZE) {
+    const oldestUrl = loadedUrlCache.values().next().value;
+    if (oldestUrl !== undefined) loadedUrlCache.delete(oldestUrl);
+  }
+
+  loadedUrlCache.add(url);
+}
 
 function resolveInitialStatus(url: string | null): ImageLoadingStatus {
   if (!url) return "error";
-  if (loadedUrlCache.has(url)) return "loaded";
-  return "idle";
-}
-
-function isShimmerVisible(status: ImageLoadingStatus): boolean {
-  return status === "idle";
+  return loadedUrlCache.has(url) ? "loaded" : "idle";
 }
 
 export function useImage({
@@ -58,12 +67,11 @@ export function useImage({
 
   if (prevSrcRef.current !== src) {
     prevSrcRef.current = src;
-    const next = resolveInitialStatus(src);
-    setStatus(next);
+    setStatus(resolveInitialStatus(src));
   }
 
   const handleLoad = useCallback(() => {
-    if (src) loadedUrlCache.add(src);
+    if (src) rememberLoadedUrl(src);
     setStatus("loaded");
   }, [src]);
 
@@ -71,14 +79,14 @@ export function useImage({
     setStatus("error");
   }, []);
 
-  const imageProps = useMemo(() => {
+  const imageProps = useMemo<ResolvedImageProps | null>(() => {
     if (!src || status === "error") return null;
 
     return {
       src,
       alt,
       priority,
-      placeholder: blurDataURL ? ("blur" as const) : ("empty" as const),
+      placeholder: blurDataURL ? "blur" : "empty",
       blurDataURL,
       onLoad: handleLoad,
       onError: handleError,
@@ -89,8 +97,8 @@ export function useImage({
     status,
     isLoading: status === "idle",
     isLoaded: status === "loaded",
-    isError: status === "error" || !src,
-    shimmerVisible: !reduceMotion && isShimmerVisible(status),
+    isError: status === "error",
+    shimmerVisible: !reduceMotion && status === "idle",
     imageProps,
   };
 }

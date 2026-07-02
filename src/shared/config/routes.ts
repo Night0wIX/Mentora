@@ -4,23 +4,23 @@ export const ROUTES = {
   home: "/",
   login: "/login",
 
-  course: (courseSlug: string) =>
-    buildUrl("/courses/:courseSlug", { courseSlug }),
+  course: (courseSlug: string): string =>
+    buildUrl({ path: "/courses/:courseSlug", pathParams: { courseSlug } }),
 
-  lesson: (courseSlug: string, lessonSlug: string) =>
-    buildUrl("/courses/:courseSlug/lessons/:lessonSlug", {
-      courseSlug,
-      lessonSlug,
+  lesson: (courseSlug: string, lessonSlug: string): string =>
+    buildUrl({
+      path: "/courses/:courseSlug/lessons/:lessonSlug",
+      pathParams: { courseSlug, lessonSlug },
     }),
 
   adminCourses: "/admin/courses",
 
-  adminCourse: (courseId: string) =>
-    buildUrl("/admin/courses/:courseId", { courseId }),
+  adminCourse: (courseId: string): string =>
+    buildUrl({ path: "/admin/courses/:courseId", pathParams: { courseId } }),
 
-  adminLesson: (courseId: string, lessonId: string) =>
-    buildUrl("/admin/courses/:courseId/lessons/:lessonId", {
-      courseId,
-      lessonId,
+  adminLesson: (courseId: string, lessonId: string): string =>
+    buildUrl({
+      path: "/admin/courses/:courseId/lessons/:lessonId",
+      pathParams: { courseId, lessonId },
     }),
 } as const;

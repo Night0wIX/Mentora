@@ -1,4 +1,4 @@
-import type { PathSegmentMatch } from "@/shared/types";
+import type { CatchAllPathModifier, PathSegmentMatch } from "@/shared/types";
 
 import { PATH_PARAM_SEGMENT_PATTERN } from "./constants";
 
@@ -13,7 +13,6 @@ export function matchPathSegment(
 
   const [, parameterName, modifier] = match;
 
-  // The regex capture group only ever yields "?", "*", "+", or undefined.
   return {
     parameterName,
     modifier: modifier as PathSegmentMatch["modifier"],
@@ -22,7 +21,7 @@ export function matchPathSegment(
 
 export function isCatchAllModifier(
   modifier: PathSegmentMatch["modifier"],
-): modifier is "*" | "+" {
+): modifier is CatchAllPathModifier {
   return modifier === "*" || modifier === "+";
 }
 

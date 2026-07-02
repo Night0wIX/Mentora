@@ -1,6 +1,7 @@
 import type { ExtractedPathParams, PathParams } from "./path-params";
 import type {
   ParsedQueryParams,
+  ParseQueryParamsOptions,
   QueryParams,
   SerializeQueryParamsOptions,
 } from "./query-params";
@@ -12,6 +13,12 @@ export interface BuildUrlArguments {
   pathParams?: PathParams;
   query?: QueryParams;
   options?: BuildUrlOptions;
+}
+
+export interface ParseUrlArguments {
+  template: string;
+  actualUrl: string;
+  queryOptions?: ParseQueryParamsOptions;
 }
 
 export interface SplitUrl {

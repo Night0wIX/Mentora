@@ -1,4 +1,4 @@
-import type { PathParams } from "@/shared/types";
+import type { CatchAllPathModifier, PathParams } from "@/shared/types";
 
 import { isCatchAllModifier, matchPathSegment } from "./match-path-segment";
 
@@ -14,7 +14,7 @@ function assertNotEmptyString(parameterName: string, value: string): void {
 
 function resolveCatchAllSegments(
   parameterName: string,
-  modifier: "*" | "+",
+  modifier: CatchAllPathModifier,
   value: PathParams[string] | undefined,
 ): string[] {
   if (value === undefined) {
@@ -92,9 +92,8 @@ function resolveTemplateSegment(segment: string, params: PathParams): string[] {
 }
 
 export function applyPathParams(template: string, params: PathParams): string {
-  const resolvedSegments = template
+  return template
     .split("/")
-    .flatMap((segment) => resolveTemplateSegment(segment, params));
-
-  return resolvedSegments.join("/");
+    .flatMap((segment) => resolveTemplateSegment(segment, params))
+    .join("/");
 }
