@@ -6,4 +6,17 @@ export { CourseCard, CourseCardSkeleton } from "./components/course-card";
 export { CourseCardGrid } from "./components/course-card-grid";
 export { CatalogEmptyState } from "./components/course-catalog-empty";
 export { CATALOG_PAGE_SIZE } from "./constants";
-export type { Course, CourseCatalogSearchParams } from "./types";
+export type {
+  Course,
+  CourseCatalogParams,
+  CourseCatalogResult,
+  CourseCatalogSearchParams,
+  CourseIdParams,
+  CourseSlugParams,
+  CourseSortField,
+  CourseStatus,
+  LessonIdParams,
+  LessonSlugParams,
+  ResolvedCourseCatalogParams,
+  SortOrder,
+} from "./types";
