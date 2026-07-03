@@ -72,11 +72,6 @@ interface UseCourseSearchSuggestionsReturn {
   isPending: boolean;
 }
 
-/**
- * Fetches course suggestions for `query`. Expects an already-debounced
- * query. Guards against out-of-order responses: if `query` changes again
- * before a request resolves, the stale response is discarded.
- */
 export function useCourseSearchSuggestions(
   query: string,
 ): UseCourseSearchSuggestionsReturn {

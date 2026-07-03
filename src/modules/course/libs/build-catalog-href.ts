@@ -5,8 +5,8 @@ import type { CourseCatalogParams } from "../types";
 
 export function buildCatalogHref(
   params: CourseCatalogParams,
-  overrides: Partial<CourseCatalogParams> = {},
-  pathname = "/",
+  overrides: Partial<CourseCatalogParams>,
+  pathname: string,
 ): string {
   const merged = { ...params, ...overrides };
 
@@ -14,6 +14,7 @@ export function buildCatalogHref(
     path: pathname,
     query: {
       search: merged.search,
+      status: merged.status,
       sort: merged.sort === DEFAULT_CATALOG_SORT ? undefined : merged.sort,
       order: merged.order === DEFAULT_CATALOG_ORDER ? undefined : merged.order,
       page: merged.page && merged.page > 1 ? merged.page : undefined,

@@ -8,7 +8,8 @@ import { Button } from "@/shared/ui/button";
 import { Header } from "@/shared/ui/header";
 
 export const AdminHeader = () => {
-  const onLogout = () => {}; // TODO: Replace with real data
+  // TODO(auth): wire up real logout mutation and redirect
+  const handleLogout = () => {};
 
   return (
     <Header
@@ -25,7 +26,7 @@ export const AdminHeader = () => {
             variant="ghost"
             size="sm"
             aria-label="Log out"
-            onClick={onLogout}
+            onClick={handleLogout}
           >
             <LogOut aria-hidden="true" />
             <span className="hidden sm:inline">Log out</span>

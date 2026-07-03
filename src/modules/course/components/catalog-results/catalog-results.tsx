@@ -31,9 +31,13 @@ export const CatalogResults = async ({ searchParams }: CatalogResultsProps) => {
 
   const isRequestedPageOutOfRange = result.page !== catalogParams.page;
   if (isRequestedPageOutOfRange) {
-    const canonicalHref = buildCatalogHref(catalogParams, {
-      page: result.page,
-    }) as Route;
+    const canonicalHref = buildCatalogHref(
+      catalogParams,
+      {
+        page: result.page,
+      },
+      ROUTES.home,
+    ) as Route;
 
     redirect(canonicalHref);
   }
@@ -63,7 +67,11 @@ export const CatalogResults = async ({ searchParams }: CatalogResultsProps) => {
         currentPage={result.page}
         totalPageCount={result.totalPages}
         getPageHref={(pageNumber) =>
-          buildCatalogHref(catalogParams, { page: pageNumber }) as Route
+          buildCatalogHref(
+            catalogParams,
+            { page: pageNumber },
+            ROUTES.home,
+          ) as Route
         }
       />
     </>

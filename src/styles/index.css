@@ -7,6 +7,10 @@
 @import "./theme.css";
 @import "./transitions.css";
 
+html {
+  scrollbar-gutter: stable;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

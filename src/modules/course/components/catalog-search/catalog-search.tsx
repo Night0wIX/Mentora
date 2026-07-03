@@ -14,7 +14,7 @@ import { CATALOG_SEARCH_MIN_CHARS } from "../../constants";
 import {
   useCatalogSearchInput,
   useCourseSearchSuggestions,
-} from "../../hooks/useCatalogSearch";
+} from "../../hooks/use-catalog-search";
 import { highlightRanges } from "../../libs/highlight-ranges";
 
 const NO_ACTIVE_INDEX = -1;

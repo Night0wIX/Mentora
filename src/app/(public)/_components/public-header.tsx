@@ -17,8 +17,8 @@ interface AuthState {
 }
 
 const MOCK_AUTH_STATE: AuthState = {
-  isAuthenticated: false,
-  user: null,
+  isAuthenticated: true,
+  user: { role: "admin" },
 };
 
 function getAdminLink({ isAuthenticated, user }: typeof MOCK_AUTH_STATE) {

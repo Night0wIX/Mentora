@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { SITE_CONFIG } from "@/shared/config";
 import type { EmptyParams, PageProps } from "@/shared/types";
@@ -8,6 +9,7 @@ import {
   CatalogControls,
   CatalogHeader,
   CatalogResults,
+  CatalogResultsSkeleton,
 } from "@/modules/course";
 
 export const metadata: Metadata = {
@@ -23,7 +25,9 @@ const CourseCatalogPage = async ({
       <CatalogHeader />
       <CatalogControls />
       <div className="pt-6">
-        <CatalogResults searchParams={searchParams} />
+        <Suspense fallback={<CatalogResultsSkeleton />}>
+          <CatalogResults searchParams={searchParams} />
+        </Suspense>
       </div>
     </div>
   );

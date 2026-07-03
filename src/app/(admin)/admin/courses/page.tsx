@@ -1,16 +1,33 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+
+import type { EmptyParams, PageProps } from "@/shared/types";
+
+import type { AdminCourseCatalogSearchParams } from "@/modules/course";
+import {
+  AdminCatalogControls,
+  AdminCatalogHeader,
+  AdminCatalogResults,
+  AdminCatalogResultsSkeleton,
+} from "@/modules/course";
 
 export const metadata: Metadata = {
-  title: "Courses",
+  title: "Manage courses",
   description: "Manage courses.",
 };
 
-const AdminCoursesPage = () => {
+const AdminCoursesPage = ({
+  searchParams,
+}: PageProps<EmptyParams, AdminCourseCatalogSearchParams>) => {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Courses list (admin)
-      </h1>
+    <div className="flex flex-col">
+      <AdminCatalogHeader />
+      <AdminCatalogControls />
+      <div className="pt-6">
+        <Suspense fallback={<AdminCatalogResultsSkeleton />}>
+          <AdminCatalogResults searchParams={searchParams} />
+        </Suspense>
+      </div>
     </div>
   );
 };

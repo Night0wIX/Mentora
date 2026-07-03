@@ -59,3 +59,13 @@ export interface CourseIdParams {
 export interface LessonIdParams extends CourseIdParams {
   lessonId: string;
 }
+
+export interface ResolvedAdminCourseCatalogParams
+  extends ResolvedCourseCatalogParams {
+  status?: CourseStatus;
+}
+
+export interface AdminCourseCatalogSearchParams
+  extends CourseCatalogSearchParams {
+  status?: string;
+}
