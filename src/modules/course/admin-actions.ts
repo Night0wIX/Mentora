@@ -3,15 +3,14 @@
 import { revalidatePath } from "next/cache";
 
 import { ROUTES } from "@/shared/config";
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
 
-import { MOCK_COURSES } from "./mocks";
+import { mapCourseRow } from "./libs/map-course-row";
 import type { Course, CourseStatus } from "./types";
 
-const ADMIN_ACTION_DELAY_MS = 500;
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+type SupabaseServerClient = Awaited<
+  ReturnType<typeof createSupabaseServerClient>
+>;
 
 function slugify(title: string): string {
   return title
@@ -23,17 +22,25 @@ function slugify(title: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function generateUniqueSlug(title: string): string {
+async function generateUniqueSlug(
+  supabase: SupabaseServerClient,
+  title: string,
+): Promise<string> {
   const baseSlug = slugify(title) || "course";
   let candidateSlug = baseSlug;
   let suffix = 2;
 
-  while (MOCK_COURSES.some((course) => course.slug === candidateSlug)) {
+  while (true) {
+    const { data } = await supabase
+      .from("courses")
+      .select("id")
+      .eq("slug", candidateSlug)
+      .maybeSingle();
+
+    if (!data) return candidateSlug;
     candidateSlug = `${baseSlug}-${suffix}`;
     suffix += 1;
   }
-
-  return candidateSlug;
 }
 
 export interface CreateCoursePayload {
@@ -45,70 +52,72 @@ export interface CreateCoursePayload {
 
 export type UpdateCoursePayload = Partial<CreateCoursePayload>;
 
-interface DeleteCourseResult {
-  success: boolean;
-}
-
 type CourseMutationResult =
   | { success: true; course: Course }
   | { success: false; error: string };
 
-export async function deleteCourseAction(
-  courseId: string,
-): Promise<DeleteCourseResult> {
-  await delay(ADMIN_ACTION_DELAY_MS);
-
-  const index = MOCK_COURSES.findIndex((course) => course.id === courseId);
-  if (index === -1) return { success: false };
-
-  MOCK_COURSES.splice(index, 1);
-  revalidatePath("/admin/courses");
-
-  return { success: true };
-}
-
 export async function createCourseAction(
   payload: CreateCoursePayload,
 ): Promise<CourseMutationResult> {
-  await delay(ADMIN_ACTION_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
+  const slug = await generateUniqueSlug(supabase, payload.title);
 
-  const newCourse: Course = {
-    id: crypto.randomUUID(),
-    slug: generateUniqueSlug(payload.title),
-    title: payload.title,
-    description: payload.description,
-    coverImageUrl: payload.coverImageUrl,
-    status: payload.status,
-    createdAt: new Date().toISOString(),
-  };
+  const { data, error } = await supabase
+    .from("courses")
+    .insert({
+      slug,
+      title: payload.title,
+      description: payload.description,
+      cover_image_url: payload.coverImageUrl,
+      status: payload.status,
+    })
+    .select("*")
+    .single();
 
-  MOCK_COURSES.unshift(newCourse);
+  if (error) return { success: false, error: error.message };
+
   revalidatePath("/admin/courses");
-
-  return { success: true, course: newCourse };
+  return { success: true, course: mapCourseRow(data) };
 }
 
 export async function updateCourseAction(
   courseId: string,
   payload: UpdateCoursePayload,
 ): Promise<CourseMutationResult> {
-  await delay(ADMIN_ACTION_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  const index = MOCK_COURSES.findIndex((course) => course.id === courseId);
-  if (index === -1) {
-    return { success: false, error: "Course not found." };
-  }
+  const { data, error } = await supabase
+    .from("courses")
+    .update({
+      ...(payload.title !== undefined && { title: payload.title }),
+      ...(payload.description !== undefined && {
+        description: payload.description,
+      }),
+      ...(payload.coverImageUrl !== undefined && {
+        cover_image_url: payload.coverImageUrl,
+      }),
+      ...(payload.status !== undefined && { status: payload.status }),
+    })
+    .eq("id", courseId)
+    .select("*")
+    .single();
 
-  const existingCourse = MOCK_COURSES[index];
-  const updatedCourse: Course = {
-    ...existingCourse,
-    ...payload,
-  };
-
-  MOCK_COURSES[index] = updatedCourse;
+  if (error) return { success: false, error: error.message };
 
   revalidatePath("/admin/courses");
-  revalidatePath(ROUTES.adminCourse(courseId)); // 👈 без цього сторінка деталей не оновиться
+  revalidatePath(ROUTES.adminCourse(courseId));
 
-  return { success: true, course: updatedCourse };
+  return { success: true, course: mapCourseRow(data) };
+}
+
+export async function deleteCourseAction(
+  courseId: string,
+): Promise<{ success: boolean }> {
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("courses").delete().eq("id", courseId);
+
+  if (error) return { success: false };
+
+  revalidatePath("/admin/courses");
+  return { success: true };
 }

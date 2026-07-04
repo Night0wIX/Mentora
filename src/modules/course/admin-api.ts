@@ -1,59 +1,40 @@
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
+
 import { ADMIN_CATALOG_PAGE_SIZE } from "./constants";
-import { MOCK_COURSES } from "./mocks";
+import { mapCourseRow } from "./libs/map-course-row";
 import type { Course, CourseCatalogParams, CourseCatalogResult } from "./types";
-
-const ADMIN_API_DELAY_MS = 400;
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function matchesSearch(title: string, search: string): boolean {
-  return title.toLowerCase().includes(search.toLowerCase());
-}
 
 export async function getAdminCourses(
   params: CourseCatalogParams,
 ): Promise<CourseCatalogResult> {
-  await delay(ADMIN_API_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
   const pageSize = params.pageSize ?? ADMIN_CATALOG_PAGE_SIZE;
   const page = params.page ?? 1;
-
-  let items = [...MOCK_COURSES];
-
-  if (params.status) {
-    items = items.filter((course) => course.status === params.status);
-  }
-
-  if (params.search) {
-    const search = params.search;
-    items = items.filter((course) => matchesSearch(course.title, search));
-  }
-
-  const sortField = params.sort ?? "createdAt";
+  const sortColumn = params.sort === "title" ? "title" : "created_at";
   const order = params.order ?? "desc";
 
-  items.sort((a, b) => {
-    const direction = order === "asc" ? 1 : -1;
+  let query = supabase.from("courses").select("*", { count: "exact" });
 
-    if (sortField === "title") {
-      return a.title.localeCompare(b.title) * direction;
-    }
+  if (params.status) query = query.eq("status", params.status);
+  if (params.search?.trim())
+    query = query.ilike("title", `%${params.search.trim()}%`);
 
-    return (
-      (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) *
-      direction
-    );
-  });
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
 
-  const total = items.length;
+  const { data, count, error } = await query
+    .order(sortColumn, { ascending: order === "asc" })
+    .range(from, to);
+
+  if (error) throw error;
+
+  const total = count ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const safePage = Math.min(page, totalPages);
-  const start = (safePage - 1) * pageSize;
 
   return {
-    items: items.slice(start, start + pageSize),
+    items: (data ?? []).map(mapCourseRow),
     total,
     page: safePage,
     pageSize,
@@ -62,7 +43,14 @@ export async function getAdminCourses(
 }
 
 export async function getAdminCourse(courseId: string): Promise<Course | null> {
-  await delay(ADMIN_API_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  return MOCK_COURSES.find((course) => course.id === courseId) ?? null;
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("id", courseId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? mapCourseRow(data) : null;
 }

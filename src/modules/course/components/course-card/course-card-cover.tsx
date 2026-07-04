@@ -48,7 +48,7 @@ export const CourseCardCover = ({
       <motion.div
         variants={COVER_VARIANTS}
         transition={transition}
-        className="h-full w-full"
+        className="h-full w-full relative"
       >
         <Image
           fill

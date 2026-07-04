@@ -2,43 +2,17 @@ import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { ROUTES } from "@/shared/config";
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
 import { Button } from "@/shared/ui/button";
 import { Header } from "@/shared/ui/header";
 
-type UserRole = "admin" | "user";
+export const PublicHeader = async () => {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getUser();
 
-interface AuthUser {
-  role: UserRole;
-}
-
-interface AuthState {
-  isAuthenticated: boolean;
-  user: AuthUser | null;
-}
-
-const MOCK_AUTH_STATE: AuthState = {
-  isAuthenticated: true,
-  user: { role: "admin" },
-};
-
-function getAdminLink({ isAuthenticated, user }: typeof MOCK_AUTH_STATE) {
-  if (isAuthenticated && user?.role === "admin") {
-    return { href: ROUTES.adminCourses, label: "Admin panel" };
-  }
-
-  if (isAuthenticated) {
-    return null;
-  }
-
-  return { href: ROUTES.login, label: "Admin login" };
-}
-
-export const PublicHeader = () => {
-  const adminLink = getAdminLink(MOCK_AUTH_STATE);
-
-  if (!adminLink) {
-    return <Header actions={null} />;
-  }
+  const adminLink = data.user
+    ? { href: ROUTES.adminCourses, label: "Admin panel" }
+    : { href: ROUTES.login, label: "Admin login" };
 
   return (
     <Header

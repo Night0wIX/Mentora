@@ -1,29 +1,36 @@
-import { MOCK_LESSONS } from "./mocks";
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
+
+import { mapLessonRow } from "./libs/map-lesson-row";
 import type { Lesson } from "./types";
 
-const ADMIN_API_DELAY_MS = 400;
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const LESSON_SELECT = "*, lesson_content_blocks(*)";
 
 export async function getAdminLessons(courseId: string): Promise<Lesson[]> {
-  await delay(ADMIN_API_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  return MOCK_LESSONS.filter((lesson) => lesson.courseId === courseId).sort(
-    (a, b) => a.order - b.order,
-  );
+  const { data, error } = await supabase
+    .from("lessons")
+    .select(LESSON_SELECT)
+    .eq("course_id", courseId)
+    .order("order_index", { ascending: true });
+
+  if (error) throw error;
+  return (data ?? []).map(mapLessonRow);
 }
 
 export async function getAdminLesson(
   courseId: string,
   lessonId: string,
 ): Promise<Lesson | null> {
-  await delay(ADMIN_API_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  return (
-    MOCK_LESSONS.find(
-      (lesson) => lesson.courseId === courseId && lesson.id === lessonId,
-    ) ?? null
-  );
+  const { data, error } = await supabase
+    .from("lessons")
+    .select(LESSON_SELECT)
+    .eq("course_id", courseId)
+    .eq("id", lessonId)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? mapLessonRow(data) : null;
 }

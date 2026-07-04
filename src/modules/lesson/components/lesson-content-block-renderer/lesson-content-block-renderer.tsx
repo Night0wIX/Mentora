@@ -1,3 +1,5 @@
+"use client";
+
 import { ExternalLink, FileIcon } from "lucide-react";
 
 import type { LessonContentBlock } from "../../types";
@@ -5,6 +7,22 @@ import { getVideoEmbedUrl } from "./lesson-content-block-renderer.utils";
 
 interface LessonContentBlockRendererProps {
   block: LessonContentBlock;
+}
+
+async function handleFileDownload(
+  url: string,
+  filename: string,
+): Promise<void> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  link.click();
+
+  URL.revokeObjectURL(blobUrl);
 }
 
 export const LessonContentBlockRenderer = ({
@@ -73,11 +91,12 @@ export const LessonContentBlockRenderer = ({
 
     case "file":
       return (
-        <a
-          href={block.content}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-3 rounded-lg border border-border px-4 py-3 transition-colors hover:bg-muted/50"
+        <button
+          type="button"
+          onClick={() =>
+            handleFileDownload(block.content, block.label || "file")
+          }
+          className="group cursor-pointer flex w-full items-center gap-3 rounded-lg border border-border px-4 py-3 text-left transition-colors hover:bg-muted/50"
         >
           <div
             aria-hidden
@@ -99,7 +118,7 @@ export const LessonContentBlockRenderer = ({
             aria-hidden
             className="h-3.5 w-3.5 text-muted-foreground"
           />
-        </a>
+        </button>
       );
 
     case "link":

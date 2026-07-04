@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 
 import { ROUTES } from "@/shared/config";
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
 
-import { MOCK_LESSONS } from "./mocks";
+import { mapLessonRow } from "./libs/map-lesson-row";
 import type {
   CreateLessonActionResult,
   CreateLessonPayload,
@@ -18,6 +19,9 @@ import type {
   UploadLessonFileActionResult,
 } from "./types";
 
+const LESSON_SELECT = "*, lesson_content_blocks(*)";
+const LESSON_FILES_BUCKET = "lesson-files";
+
 function revalidateCoursePage(courseId: string): void {
   revalidatePath(ROUTES.adminCourse(courseId));
 }
@@ -29,22 +33,28 @@ function revalidateLessonPage(courseId: string, lessonId: string): void {
 export async function createLessonAction(
   payload: CreateLessonPayload,
 ): Promise<CreateLessonActionResult> {
-  const lesson = {
-    id: crypto.randomUUID(),
-    courseId: payload.courseId,
-    title: payload.title,
-    order:
-      MOCK_LESSONS.filter((item) => item.courseId === payload.courseId).length +
-      1,
-    isPublished: false,
-    contentBlocks: [],
-  };
+  const supabase = await createSupabaseServerClient();
 
-  MOCK_LESSONS.push(lesson); // 👈 додаємо в "БД"
+  const { count } = await supabase
+    .from("lessons")
+    .select("id", { count: "exact", head: true })
+    .eq("course_id", payload.courseId);
+
+  const { data, error } = await supabase
+    .from("lessons")
+    .insert({
+      course_id: payload.courseId,
+      title: payload.title,
+      order_index: (count ?? 0) + 1,
+      is_published: false,
+    })
+    .select(LESSON_SELECT)
+    .single();
+
+  if (error) return { success: false, error: error.message };
 
   revalidateCoursePage(payload.courseId);
-
-  return { success: true, lesson };
+  return { success: true, lesson: mapLessonRow(data) };
 }
 
 export async function updateLessonAction(
@@ -52,18 +62,19 @@ export async function updateLessonAction(
   lessonId: string,
   payload: UpdateLessonPayload,
 ): Promise<UpdateLessonActionResult> {
-  const index = MOCK_LESSONS.findIndex((item) => item.id === lessonId);
+  const supabase = await createSupabaseServerClient();
 
-  if (index === -1) {
-    return { success: false, error: "Lesson not found." };
-  }
+  const { data, error } = await supabase
+    .from("lessons")
+    .update({ title: payload.title })
+    .eq("id", lessonId)
+    .select(LESSON_SELECT)
+    .single();
 
-  const lesson = { ...MOCK_LESSONS[index], title: payload.title };
-  MOCK_LESSONS[index] = lesson; // 👈 записуємо оновлення назад
+  if (error) return { success: false, error: error.message };
 
   revalidateCoursePage(courseId);
-
-  return { success: true, lesson };
+  return { success: true, lesson: mapLessonRow(data) };
 }
 
 export async function updateLessonContentAction(
@@ -71,33 +82,56 @@ export async function updateLessonContentAction(
   lessonId: string,
   contentBlocks: LessonContentBlock[],
 ): Promise<UpdateLessonContentActionResult> {
-  const index = MOCK_LESSONS.findIndex((item) => item.id === lessonId);
+  const supabase = await createSupabaseServerClient();
 
-  if (index === -1) {
-    return { success: false, error: "Lesson not found." };
+  const { error: deleteError } = await supabase
+    .from("lesson_content_blocks")
+    .delete()
+    .eq("lesson_id", lessonId);
+
+  if (deleteError) return { success: false, error: deleteError.message };
+
+  if (contentBlocks.length > 0) {
+    const { error: insertError } = await supabase
+      .from("lesson_content_blocks")
+      .insert(
+        contentBlocks.map((block, index) => ({
+          lesson_id: lessonId,
+          type: block.type,
+          content: block.content,
+          label: block.label,
+          order_index: index,
+        })),
+      );
+
+    if (insertError) return { success: false, error: insertError.message };
   }
 
-  const lesson = { ...MOCK_LESSONS[index], contentBlocks, isPublished: true };
-  MOCK_LESSONS[index] = lesson; // 👈 записуємо оновлення назад
+  const { data, error } = await supabase
+    .from("lessons")
+    .update({ is_published: true })
+    .eq("id", lessonId)
+    .select(LESSON_SELECT)
+    .single();
+
+  if (error) return { success: false, error: error.message };
 
   revalidateCoursePage(courseId);
   revalidateLessonPage(courseId, lessonId);
 
-  return { success: true, lesson };
+  return { success: true, lesson: mapLessonRow(data) };
 }
 
 export async function deleteLessonAction(
   courseId: string,
   lessonId: string,
 ): Promise<DeleteLessonActionResult> {
-  const index = MOCK_LESSONS.findIndex((item) => item.id === lessonId);
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
 
-  if (index !== -1) {
-    MOCK_LESSONS.splice(index, 1); // 👈 видаляємо
-  }
+  if (error) return { success: false, error: error.message };
 
   revalidateCoursePage(courseId);
-
   return { success: true };
 }
 
@@ -105,13 +139,21 @@ export async function reorderLessonsAction(
   courseId: string,
   reorderedLessons: ReorderedLesson[],
 ): Promise<ReorderLessonsActionResult> {
-  for (const { lessonId, order } of reorderedLessons) {
-    const lesson = MOCK_LESSONS.find((item) => item.id === lessonId);
-    if (lesson) lesson.order = order; // 👈 застосовуємо новий порядок
-  }
+  const supabase = await createSupabaseServerClient();
+
+  const results = await Promise.all(
+    reorderedLessons.map(({ lessonId, order }) =>
+      supabase
+        .from("lessons")
+        .update({ order_index: order })
+        .eq("id", lessonId),
+    ),
+  );
+
+  const failed = results.find((result) => result.error);
+  if (failed?.error) return { success: false, error: failed.error.message };
 
   revalidateCoursePage(courseId);
-
   return { success: true };
 }
 
@@ -124,9 +166,20 @@ export async function uploadLessonFileAction(
     return { success: false, error: "No file was provided." };
   }
 
-  // TODO: integrate with real storage (S3, Cloudinary, Vercel Blob, etc.)
-  return {
-    success: false,
-    error: "File uploads aren't connected yet — paste a URL instead.",
-  };
+  const supabase = await createSupabaseServerClient();
+  const filePath = `${crypto.randomUUID()}-${file.name}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from(LESSON_FILES_BUCKET)
+    .upload(filePath, file);
+
+  if (uploadError) {
+    return { success: false, error: uploadError.message };
+  }
+
+  const { data } = supabase.storage
+    .from(LESSON_FILES_BUCKET)
+    .getPublicUrl(filePath);
+
+  return { success: true, fileUrl: data.publicUrl };
 }

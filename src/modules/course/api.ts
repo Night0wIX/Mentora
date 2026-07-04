@@ -1,21 +1,36 @@
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
+
 import {
   CATALOG_PAGE_SIZE,
   DEFAULT_CATALOG_ORDER,
   DEFAULT_CATALOG_PAGE,
   DEFAULT_CATALOG_SORT,
 } from "./constants";
+import { mapCourseRow } from "./libs/map-course-row";
 import {
   type CourseQueryMatch,
   matchCourseTitle,
 } from "./libs/match-course-query";
-import { MOCK_COURSES } from "./mocks";
 import type { Course, CourseCatalogParams, CourseCatalogResult } from "./types";
 
-/** Simulated network latency — remove once this module is backed by a real API. */
-const MOCK_DELAY_MS = 600;
+function normalizePageSize(pageSize: number | undefined): number {
+  if (pageSize === undefined || !Number.isInteger(pageSize) || pageSize < 1) {
+    return CATALOG_PAGE_SIZE;
+  }
+  return pageSize;
+}
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+async function getPublishedCourses(): Promise<Course[]> {
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("status", "published");
+
+  if (error) throw error;
+
+  return (data ?? []).map(mapCourseRow);
 }
 
 interface MatchedCourseEntry {
@@ -39,22 +54,14 @@ export async function searchCourseSuggestions(
   query: string,
   limit: number,
 ): Promise<CourseSuggestion[]> {
-  await delay(MOCK_DELAY_MS);
+  const courses = await getPublishedCourses();
 
-  return MOCK_COURSES.filter((course) => course.status === "published")
+  return courses
     .map((course) => ({ course, match: matchCourseTitle(course.title, query) }))
     .filter(isMatchedEntry)
     .sort((a, b) => b.match.score - a.match.score)
     .slice(0, limit)
     .map((entry) => ({ course: entry.course, ranges: entry.match.ranges }));
-}
-
-function filterByStatus(
-  courses: Course[],
-  status: CourseCatalogParams["status"],
-): Course[] {
-  if (!status) return courses;
-  return courses.filter((course) => course.status === status);
 }
 
 function filterBySearch(
@@ -111,23 +118,14 @@ function paginate(
   };
 }
 
-function normalizePageSize(pageSize: number | undefined): number {
-  if (pageSize === undefined || !Number.isInteger(pageSize) || pageSize < 1) {
-    return CATALOG_PAGE_SIZE;
-  }
-  return pageSize;
-}
-
 export async function getCourses(
   params: CourseCatalogParams = {},
 ): Promise<CourseCatalogResult> {
-  await delay(MOCK_DELAY_MS);
-
   const pageSize = normalizePageSize(params.pageSize);
   const requestedPage = params.page ?? DEFAULT_CATALOG_PAGE;
 
-  const byStatus = filterByStatus(MOCK_COURSES, params.status);
-  const bySearch = filterBySearch(byStatus, params.search);
+  const courses = await getPublishedCourses();
+  const bySearch = filterBySearch(courses, params.search);
   const sorted = sortCourses(bySearch, params.sort, params.order);
 
   const { items, totalPages, clampedPage } = paginate(
@@ -146,11 +144,15 @@ export async function getCourses(
 }
 
 export async function getCourseBySlug(slug: string): Promise<Course | null> {
-  await delay(MOCK_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  const course = MOCK_COURSES.find(
-    (item) => item.slug === slug && item.status === "published",
-  );
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle();
 
-  return course ?? null;
+  if (error) throw error;
+  return data ? mapCourseRow(data) : null;
 }

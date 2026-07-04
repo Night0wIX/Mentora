@@ -3,8 +3,11 @@
 import { useForm } from "@tanstack/react-form";
 import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
+import { ROUTES } from "@/shared/config";
+import { createSupabaseBrowserClient } from "@/shared/libs/supabase/client";
 import { Button } from "@/shared/ui/button";
 import { cn } from "@/shared/utils";
 
@@ -18,6 +21,8 @@ import { getFieldErrorMessage } from "./login-form.utils";
 
 export function LoginForm() {
   const formInstanceId = useId();
+  const router = useRouter();
+  const supabase = createSupabaseBrowserClient();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [submissionErrorMessage, setSubmissionErrorMessage] = useState("");
 
@@ -29,15 +34,29 @@ export function LoginForm() {
     onSubmit: async ({ value }) => {
       setSubmissionErrorMessage("");
 
-      try {
-        // TODO: replace with real auth logic (server action / API route) once backend is ready.
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        void value;
-      } catch {
-        setSubmissionErrorMessage(LOGIN_FORM_SUBMISSION_ERROR_MESSAGE);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: value.email,
+        password: value.password,
+      });
+
+      if (error) {
+        setSubmissionErrorMessage(
+          error.message || LOGIN_FORM_SUBMISSION_ERROR_MESSAGE,
+        );
+        return;
       }
+
+      router.push(ROUTES.adminCourses);
+      router.refresh();
     },
   });
+
+  const handleGoogleSignIn = async (): Promise<void> => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -241,8 +260,12 @@ export function LoginForm() {
         <span className="border-border h-px flex-1 border-t" />
       </div>
 
-      {/* UI only — wire up real Google OAuth once auth backend is ready. */}
-      <Button type="button" variant="outline" fullWidth>
+      <Button
+        type="button"
+        variant="outline"
+        fullWidth
+        onClick={handleGoogleSignIn}
+      >
         <GoogleIcon className="size-4" />
         Continue with Google
       </Button>

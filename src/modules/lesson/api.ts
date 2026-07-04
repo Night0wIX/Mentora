@@ -1,32 +1,38 @@
-import { MOCK_LESSONS } from "./mocks";
+import { createSupabaseServerClient } from "@/shared/libs/supabase/server";
+
+import { mapLessonRow } from "./libs/map-lesson-row";
 import type { Lesson } from "./types";
 
-const MOCK_DELAY_MS = 400;
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+const LESSON_SELECT = "*, lesson_content_blocks(*)";
 
 export async function getPublishedLessons(courseId: string): Promise<Lesson[]> {
-  await delay(MOCK_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  return MOCK_LESSONS.filter(
-    (lesson) => lesson.courseId === courseId && lesson.isPublished,
-  ).sort((a, b) => a.order - b.order);
+  const { data, error } = await supabase
+    .from("lessons")
+    .select(LESSON_SELECT)
+    .eq("course_id", courseId)
+    .eq("is_published", true)
+    .order("order_index", { ascending: true });
+
+  if (error) throw error;
+  return (data ?? []).map(mapLessonRow);
 }
 
 export async function getPublishedLesson(
   courseId: string,
   lessonId: string,
 ): Promise<Lesson | null> {
-  await delay(MOCK_DELAY_MS);
+  const supabase = await createSupabaseServerClient();
 
-  return (
-    MOCK_LESSONS.find(
-      (lesson) =>
-        lesson.courseId === courseId &&
-        lesson.id === lessonId &&
-        lesson.isPublished,
-    ) ?? null
-  );
+  const { data, error } = await supabase
+    .from("lessons")
+    .select(LESSON_SELECT)
+    .eq("course_id", courseId)
+    .eq("id", lessonId)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? mapLessonRow(data) : null;
 }

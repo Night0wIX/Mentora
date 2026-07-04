@@ -2,14 +2,22 @@
 
 import { LogOut, Store } from "lucide-react";
 import Link from "next/link";
+import { useTransition } from "react";
 
 import { ROUTES } from "@/shared/config";
 import { Button } from "@/shared/ui/button";
 import { Header } from "@/shared/ui/header";
 
+import { signOutAction } from "@/modules/auth";
+
 export const AdminHeader = () => {
-  // TODO(auth): wire up real logout mutation and redirect
-  const handleLogout = () => {};
+  const [isLoggingOut, startLogoutTransition] = useTransition();
+
+  const handleLogout = (): void => {
+    startLogoutTransition(async () => {
+      await signOutAction();
+    });
+  };
 
   return (
     <Header
@@ -27,6 +35,8 @@ export const AdminHeader = () => {
             size="sm"
             aria-label="Log out"
             onClick={handleLogout}
+            disabled={isLoggingOut}
+            loading={isLoggingOut}
           >
             <LogOut aria-hidden="true" />
             <span className="hidden sm:inline">Log out</span>
