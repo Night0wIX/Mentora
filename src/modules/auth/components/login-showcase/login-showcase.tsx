@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
+import Link from "next/link";
 
+import { ROUTES } from "@/shared/config";
 import { Logo } from "@/shared/ui/logo";
 import { cn } from "@/shared/utils";
 
@@ -49,10 +51,10 @@ export function LoginShowcase() {
         />
       </div>
 
-      <div className="relative flex items-center gap-2.5">
+      <Link href={ROUTES.home} className="relative flex items-center gap-2.5">
         <Logo size="lg" className="text-background" />
         <span className="text-lg font-medium tracking-tight">Mentora</span>
-      </div>
+      </Link>
 
       <div className="relative flex flex-col gap-8">
         <h2 id="login-showcase-heading" className="sr-only">
