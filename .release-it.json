@@ -16,7 +16,7 @@
       "preset": {
         "name": "conventionalcommits"
       },
-      "infile": "CHANGELOG.md"
+      "infile": "docs/CHANGELOG.md"
     }
   }
 }
