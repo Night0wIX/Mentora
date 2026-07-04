@@ -1,26 +1,51 @@
-import type { Metadata } from "next";
+import { ArrowLeft } from "lucide-react";
+import type { Metadata, Route } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-import type { PageProps } from "@/shared/types";
+import { ROUTES } from "@/shared/config";
 
-import type { LessonIdParams } from "@/modules/course";
+import { getAdminLesson, LessonContentEditor } from "@/modules/lesson";
 
-export const metadata: Metadata = {
-  title: "Lesson editor",
-  description: "Edit lesson content.",
+interface AdminLessonEditorPageProps {
+  params: Promise<{ courseId: string; lessonId: string }>;
+}
+
+export const generateMetadata = async ({
+  params,
+}: AdminLessonEditorPageProps): Promise<Metadata> => {
+  const { courseId, lessonId } = await params;
+  const lesson = await getAdminLesson(courseId, lessonId);
+
+  return {
+    title: lesson ? `${lesson.title} · Admin` : "Lesson not found",
+    robots: { index: false, follow: false },
+  };
 };
 
-const AdminLessonEditorPage = async ({ params }: PageProps<LessonIdParams>) => {
+export default async function AdminLessonEditorPage({
+  params,
+}: AdminLessonEditorPageProps) {
   const { courseId, lessonId } = await params;
+  const lesson = await getAdminLesson(courseId, lessonId);
+
+  if (!lesson) {
+    notFound();
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Lesson editor (admin)
-      </h1>
-      <p className="text-muted-foreground">courseId: {courseId}</p>
-      <p className="text-muted-foreground">lessonId: {lessonId}</p>
+    <div className="space-y-6">
+      <header>
+        <Link
+          href={ROUTES.adminCourse(courseId) as Route}
+          className="mb-1.5 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft aria-hidden className="h-3.5 w-3.5" /> Back to course
+        </Link>
+        <h1 className="text-xl font-semibold tracking-tight">{lesson.title}</h1>
+      </header>
+
+      <LessonContentEditor lesson={lesson} />
     </div>
   );
-};
-
-export default AdminLessonEditorPage;
+}

@@ -1,7 +1,10 @@
 "use client";
 
 import { Loader2, Pencil, Trash2 } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
 
+import { ROUTES } from "@/shared/config";
 import { Button } from "@/shared/ui/button";
 import { formatRelativeDate } from "@/shared/utils";
 
@@ -34,7 +37,12 @@ export const AdminCourseRow = ({
     >
       <th scope="row" className="min-w-0 overflow-hidden text-left font-normal">
         <div className="flex min-w-0 items-center gap-2">
-          <p className="min-w-0 truncate text-sm font-medium">{course.title}</p>
+          <Link
+            href={ROUTES.adminCourse(course.id) as Route}
+            className="min-w-0 truncate text-sm font-medium hover:underline"
+          >
+            {course.title}
+          </Link>
           <CourseStatusBadge
             status={course.status}
             className="shrink-0 md:hidden"

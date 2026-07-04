@@ -1,8 +1,10 @@
-export { getCourses } from "./api";
+export { getAdminCourse } from "./admin-api";
+export { getCourseBySlug, getCourses } from "./api";
 export { AdminCatalogControls } from "./components/admin-catalog-controls";
 export { AdminCatalogHeader } from "./components/admin-catalog-header";
 export { AdminCatalogResults } from "./components/admin-catalog-results";
 export { AdminCatalogResultsSkeleton } from "./components/admin-catalog-results-skeleton";
+export { AdminCourseDetailHeader } from "./components/admin-course-detail-header";
 export { CatalogControls } from "./components/catalog-controls";
 export { CatalogHeader } from "./components/catalog-header";
 export { CatalogResults } from "./components/catalog-results";

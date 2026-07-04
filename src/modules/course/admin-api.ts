@@ -1,6 +1,6 @@
 import { ADMIN_CATALOG_PAGE_SIZE } from "./constants";
 import { MOCK_COURSES } from "./mocks";
-import type { CourseCatalogParams, CourseCatalogResult } from "./types";
+import type { Course, CourseCatalogParams, CourseCatalogResult } from "./types";
 
 const ADMIN_API_DELAY_MS = 400;
 
@@ -59,4 +59,10 @@ export async function getAdminCourses(
     pageSize,
     totalPages,
   };
+}
+
+export async function getAdminCourse(courseId: string): Promise<Course | null> {
+  await delay(ADMIN_API_DELAY_MS);
+
+  return MOCK_COURSES.find((course) => course.id === courseId) ?? null;
 }

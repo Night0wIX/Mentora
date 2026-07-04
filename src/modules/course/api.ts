@@ -144,3 +144,13 @@ export async function getCourses(
     totalPages,
   };
 }
+
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
+  await delay(MOCK_DELAY_MS);
+
+  const course = MOCK_COURSES.find(
+    (item) => item.slug === slug && item.status === "published",
+  );
+
+  return course ?? null;
+}

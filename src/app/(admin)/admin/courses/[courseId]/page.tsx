@@ -1,25 +1,52 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
-import type { PageProps } from "@/shared/types";
+import { AdminCourseDetailHeader, getAdminCourse } from "@/modules/course";
+import {
+  AdminLessonList,
+  AdminLessonListSkeleton,
+  getAdminLessons,
+} from "@/modules/lesson";
 
-import type { CourseIdParams } from "@/modules/course";
+interface AdminCourseDetailPageProps {
+  params: Promise<{ courseId: string }>;
+}
 
-export const metadata: Metadata = {
-  title: "Course detail",
-  description: "Edit course details.",
+export const generateMetadata = async ({
+  params,
+}: AdminCourseDetailPageProps): Promise<Metadata> => {
+  const { courseId } = await params;
+  const course = await getAdminCourse(courseId);
+
+  return {
+    title: course ? `${course.title} · Admin` : "Course not found",
+    robots: { index: false, follow: false },
+  };
 };
 
-const AdminCourseDetailPage = async ({ params }: PageProps<CourseIdParams>) => {
+async function LessonsSection({ courseId }: { courseId: string }) {
+  const lessons = await getAdminLessons(courseId);
+
+  return <AdminLessonList courseId={courseId} lessons={lessons} />;
+}
+
+export default async function AdminCourseDetailPage({
+  params,
+}: AdminCourseDetailPageProps) {
   const { courseId } = await params;
+  const course = await getAdminCourse(courseId);
+
+  if (!course) {
+    notFound();
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Course detail (admin)
-      </h1>
-      <p className="text-muted-foreground">courseId: {courseId}</p>
+    <div className="space-y-6">
+      <AdminCourseDetailHeader course={course} />
+      <Suspense fallback={<AdminLessonListSkeleton count={3} />}>
+        <LessonsSection courseId={courseId} />
+      </Suspense>
     </div>
   );
-};
-
-export default AdminCourseDetailPage;
+}

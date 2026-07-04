@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { ROUTES } from "@/shared/config";
+
 import { MOCK_COURSES } from "./mocks";
 import type { Course, CourseStatus } from "./types";
 
@@ -104,7 +106,9 @@ export async function updateCourseAction(
   };
 
   MOCK_COURSES[index] = updatedCourse;
+
   revalidatePath("/admin/courses");
+  revalidatePath(ROUTES.adminCourse(courseId)); // 👈 без цього сторінка деталей не оновиться
 
   return { success: true, course: updatedCourse };
 }
