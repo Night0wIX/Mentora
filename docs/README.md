@@ -1,1 +1,3 @@
 # Mentora
+
+Mentora is a modern online learning platform built with Next.js, React, TypeScript, and Supabase. The application allows students to browse courses, access structured lessons, and learn through text, images, videos, files, and external resources. Teachers can create, edit, organize, and manage courses and lessons through a dedicated administration panel. The project focuses on a clean user experience, responsive design, accessibility, type safety, and maintainable architecture while using modern frontend technologies such as Tailwind CSS, Radix UI, TanStack Form, Storybook, and Vitest.
