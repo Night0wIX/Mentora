@@ -73,8 +73,8 @@ importers:
         specifier: ^21.2.4
         version: 21.2.4
       '@github-ui/storybook-addon-performance-panel':
-        specifier: ^1.3.0
-        version: 1.3.0(@storybook/icons@2.1.0(react@19.2.8))(@storybook/react@10.4.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))(typescript@6.0.3))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))
+        specifier: ^1.3.1
+        version: 1.3.1(@storybook/icons@2.1.0(react@19.2.8))(@storybook/react@10.4.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))(typescript@6.0.3))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))
       '@release-it/conventional-changelog':
         specifier: ^11.0.1
         version: 11.0.1(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.4.0)(release-it@20.2.1(@types/node@24.13.3)(magicast@0.5.3))
@@ -687,8 +687,8 @@ packages:
   '@floating-ui/utils@0.2.11':
     resolution: {integrity: sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg==}
 
-  '@github-ui/storybook-addon-performance-panel@1.3.0':
-    resolution: {integrity: sha512-fg17g+tMIxf43yswT87r0nFnnEqG6xxX+Y4hsBgMiZbYPnGC9Xkiv6zLq3jzTsLYZK02Cb96gOZZqb6NWc4WsA==}
+  '@github-ui/storybook-addon-performance-panel@1.3.1':
+    resolution: {integrity: sha512-Y58OJ6K21rn+0fIKpfU/tjuaxVm4fDZ2790NRbV/DKJOElgo3oW/SKRHjdknd7nkzqkpCUkc9UiA6jBqBfHnng==}
     peerDependencies:
       '@storybook/icons': ^2.0.0
       '@storybook/react': ^10.0.0 || >=11.0.0-0 <12.0.0-0
@@ -5977,7 +5977,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.11': {}
 
-  '@github-ui/storybook-addon-performance-panel@1.3.0(@storybook/icons@2.1.0(react@19.2.8))(@storybook/react@10.4.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))(typescript@6.0.3))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))':
+  '@github-ui/storybook-addon-performance-panel@1.3.1(@storybook/icons@2.1.0(react@19.2.8))(@storybook/react@10.4.6(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))(typescript@6.0.3))(react@19.2.8)(storybook@10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8))':
     dependencies:
       '@storybook/icons': 2.1.0(react@19.2.8)
       storybook: 10.4.6(@testing-library/dom@10.4.1)(@types/react@19.2.18)(react@19.2.8)
