@@ -2,10 +2,10 @@
   "name": "mentora",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@11.28.9",
+  "packageManager": "pnpm@11.28.13",
   "engines": {
     "node": ">=24.22.3",
-    "pnpm": ">=11.28.9"
+    "pnpm": ">=11.28.13"
   },
   "scripts": {
     "dev": "next dev",
