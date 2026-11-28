@@ -62,7 +62,7 @@
     "@storybook/addon-vitest": "^10.6.9",
     "@storybook/nextjs-vite": "^10.6.9",
     "@tailwindcss/postcss": "^4.3.5",
-    "@types/node": "^24.19.2",
+    "@types/node": "^24.19.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitest/browser-playwright": "^4.1.12",
